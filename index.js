@@ -117,7 +117,6 @@ app.post('/author', async (req, res) => {
 app.post('/logIn', async (req, res) => {
     try {
         let user = await database.collection('author').findOne({ email: req.body.email });
-        console.log(user);
         let isAuthenticated = user != null && isPasswordValid(user.password, req.body.password);
         res.send(isAuthenticated);
     } catch (e) {
