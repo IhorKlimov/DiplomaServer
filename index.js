@@ -1,6 +1,7 @@
 const express = require('express');
 const { MongoClient } = require("mongodb");
 const cors = require('cors');
+const bcrypt = require('bcrypt-nodejs');
 
 const app = express();
 const port = 3000;
@@ -99,7 +100,9 @@ app.post('/recipe', async (req, res) => {
 app.post('/author', async (req, res) => {
     try {
         const author = {
-            name: req.body.name,
+            userName: req.body.userName,
+            email: req.body.email,
+            password: generateHash(req.body.password),
             imageUrl: req.body.imageUrl
         };
         database.collection('author').insertOne(author);
@@ -111,7 +114,27 @@ app.post('/author', async (req, res) => {
     }
 })
 
+app.post('/logIn', async (req, res) => {
+    try {
+        let user = await database.collection('author').findOne({ email: req.body.email });
+        console.log(user);
+        let isAuthenticated = user != null && isPasswordValid(user.password, req.body.password);
+        res.send(isAuthenticated);
+    } catch (e) {
 
+    } finally {
+
+    }
+})
+
+
+function generateHash(password) {
+    return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
+};
+
+function isPasswordValid(userPassword, password) {
+    return bcrypt.compareSync(password, userPassword);
+};
 
 
 
