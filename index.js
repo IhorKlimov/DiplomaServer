@@ -2,6 +2,9 @@ const express = require('express');
 const { MongoClient } = require("mongodb");
 const cors = require('cors');
 const bcrypt = require('bcrypt-nodejs');
+const http = require("http");
+const path = require("path");
+const fs = require("fs");
 
 const app = express();
 const port = 3000;
@@ -11,6 +14,8 @@ const database = client.db('test');
 
 app.use(express.urlencoded());
 app.use(cors());
+
+app.get("/", express.static(path.join(__dirname, "./public")));
 
 app.get('/recipes', async (req, res) => {
     try {
