@@ -2,7 +2,16 @@
 
 
 
-## Starting a local database
+## Database
+
+Database is a MongoDB with a use of Mongoosh.
+To connect to it from a terminal, run this command
+```bash
+mongosh
+```
+and then use any of the commands https://www.mongodb.com/docs/mongodb-shell/crud/
+
+### Starting a local database
 
 To start 
 ```bash
