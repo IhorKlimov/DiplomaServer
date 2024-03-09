@@ -7,6 +7,11 @@ const path = require("path");
 const fs = require("fs");
 const mongoose = require('mongoose');
 
+
+// Session
+const session = require('./session/session');
+
+
 // Database models
 const User = require('./database/schema/user');
 const Recipe = require('./database/schema/recipe');
@@ -130,7 +135,8 @@ app.post('/author', async (req, res) => {
         }
 
         const model = await user.save();
-        res.send(model);
+        const token = session.createSession(model._id);
+        res.send(token);
     } catch (e) {
 
     } finally {
@@ -143,7 +149,8 @@ app.post('/logIn', async (req, res) => {
         let user = await User.findOne({ email: req.body.email });
         let isAuthenticated = user != null && isPasswordValid(user.password, req.body.password);
         if (isAuthenticated) {
-            res.send(user);
+            const token = session.createSession(user._id);
+            res.send(token);
         } else {
             res.status(401).send("Wrong credentials");
         }
