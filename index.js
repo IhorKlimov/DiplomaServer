@@ -64,7 +64,7 @@ app.get('/recipe', async (req, res) => {
                 {
                     "$lookup": {
                         "let": { "authorObjectId": { "$toObjectId": "$authorId" } },
-                        "from": "author",
+                        "from": "users",
                         "pipeline": [
                             { "$match": { "$expr": { "$eq": ["$_id", "$$authorObjectId"] } } },
                         ],
@@ -72,7 +72,8 @@ app.get('/recipe', async (req, res) => {
                     }
                 },
                 { "$unwind": { path: "$author" } }
-            ]).toArray();
+            ]);
+        console.log(data);
         res.send(data[0]);
     } catch (e) {
         res.send(e);
@@ -117,6 +118,16 @@ app.post('/author', async (req, res) => {
             password: generateHash(req.body.password),
             imageUrl: req.body.imageUrl
         });
+
+        const data = await User.findOne({ email: req.body.email });
+        console.log('Check', data);
+        if (data) {
+            console.log('User already exists');
+            res.status(400).send("User with this email already exists");
+            return;
+        }
+
+
         const model = await user.save();
         res.send(model);
     } catch (e) {
