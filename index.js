@@ -41,7 +41,6 @@ app.get('/recipes', async (req, res) => {
                 },
                 { "$unwind": { path: "$author" } }
             ]).exec();
-
         res.send(data);
     } catch (e) {
         res.send(e);
@@ -119,14 +118,16 @@ app.post('/author', async (req, res) => {
             imageUrl: req.body.imageUrl
         });
 
-        const data = await User.findOne({ email: req.body.email });
-        console.log('Check', data);
-        if (data) {
-            console.log('User already exists');
+        const checkByEmail = await User.findOne({ email: req.body.email });
+        if (checkByEmail) {
             res.status(400).send("User with this email already exists");
             return;
         }
-
+        const checkByUserName = await User.findOne({ userName: req.body.userName });
+        if (checkByUserName) {
+            res.status(400).send("This user name is not available");
+            return;
+        }
 
         const model = await user.save();
         res.send(model);
@@ -141,7 +142,11 @@ app.post('/logIn', async (req, res) => {
     try {
         let user = await User.findOne({ email: req.body.email });
         let isAuthenticated = user != null && isPasswordValid(user.password, req.body.password);
-        res.send(isAuthenticated);
+        if (isAuthenticated) {
+            res.send(user);
+        } else {
+            res.status(401).send("Wrong credentials");
+        }
     } catch (e) {
 
     } finally {
