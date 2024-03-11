@@ -99,16 +99,22 @@ app.get('/authors', async (req, res) => {
 
 app.post('/recipe', async (req, res) => {
     try {
+        const userId = session.getUserId(req.get('session'));
+        if (!userId) {
+            res.status(401).send('Unauthorized. Missing user id');
+            return;
+        }
+
         const recipe = Recipe({
             title: req.body.title,
             imageUrl: req.body.imageUrl,
-            description: req.body.description,
-            authorId: req.body.authorId
+            description: req.body.text,
+            authorId: userId,
         });
         const model = await recipe.save();
-        res.send(model);
+        res.send({ recipeId: model._id, });
     } catch (e) {
-
+        res.status(400).send(e.message);
     } finally {
         // await client.close();
     }
@@ -136,7 +142,7 @@ app.post('/author', async (req, res) => {
 
         const model = await user.save();
         const token = session.createSession(model._id);
-        res.send(token);
+        res.send({ sessionId: token });
     } catch (e) {
 
     } finally {
@@ -150,7 +156,7 @@ app.post('/logIn', async (req, res) => {
         let isAuthenticated = user != null && isPasswordValid(user.password, req.body.password);
         if (isAuthenticated) {
             const token = session.createSession(user._id);
-            res.send(token);
+            res.send({ sessionId: token });
         } else {
             res.status(401).send("Wrong credentials");
         }
