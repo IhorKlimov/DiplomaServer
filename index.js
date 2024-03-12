@@ -132,7 +132,7 @@ app.post('/upload', async (req, res) => {
     let file = req.files['0'];
     console.log(file);
 
-    const dirCreation = await mkdir('public/images', { recursive: true });
+    await mkdir('public/images', { recursive: true });
 
     const newFileName = `${uuidv4()}${file.name.substring(file.name.lastIndexOf('.'), file.name.length)}`;
 
@@ -146,7 +146,7 @@ app.post('/upload', async (req, res) => {
             res.send({ imageUrl: fullUrl });
         })
         .catch((error) => {
-            return res.status(500).send(error);
+            return res.status(500).send(error.message);
         });
 });
 
