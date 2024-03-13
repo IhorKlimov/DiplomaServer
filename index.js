@@ -17,6 +17,7 @@ const session = require('./session/session');
 // Database models
 const User = require('./database/schema/user');
 const Recipe = require('./database/schema/recipe');
+const { ObjectId } = require('mongodb');
 
 
 const app = express();
@@ -35,6 +36,18 @@ app.use(express.static('public'));
 app.get("/", express.static(path.join(__dirname, "./public")));
 
 app.get('/recipes', async (req, res) => {
+    const userId = req.query.userId;
+
+    const pipelines = [
+        { "$match": { "$expr": { "$eq": ["$_id", "$$authorObjectId"] } } },
+    ];
+
+    if (userId) {
+        pipelines.push({
+            "$match": { "$expr": { "$eq": ["$_id", new ObjectId(userId)] } }
+        });
+    }
+
     try {
         const data = await Recipe.aggregate(
             [
@@ -42,9 +55,7 @@ app.get('/recipes', async (req, res) => {
                     "$lookup": {
                         "let": { "authorObjectId": { "$toObjectId": "$authorId" } },
                         "from": "users",
-                        "pipeline": [
-                            { "$match": { "$expr": { "$eq": ["$_id", "$$authorObjectId"] } } },
-                        ],
+                        "pipeline": pipelines,
                         "as": "author"
                     }
                 },
@@ -140,7 +151,7 @@ app.post('/upload', async (req, res) => {
         .then(() => {
             const protocol = req.protocol;
             const host = req.hostname;
-            
+
             const fullUrl = `${protocol}://${host}:${port}/images/${newFileName}`;
 
             res.send({ imageUrl: fullUrl });
