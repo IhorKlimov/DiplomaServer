@@ -36,11 +36,20 @@ app.use(express.static('public'));
 app.get("/", express.static(path.join(__dirname, "./public")));
 
 app.get('/recipes', async (req, res) => {
-    const userId = req.query.userId;
+    let userId = req.query.userId;
+    const showMyRecipes = req.query.showMyRecipes;
 
     const pipelines = [
         { "$match": { "$expr": { "$eq": ["$_id", "$$authorObjectId"] } } },
     ];
+
+    if (showMyRecipes === 'true') {
+        userId = session.getUserId(req.get('session'));
+        if (!userId) {
+            res.status(401).send('Unauthorized. Missing user id');
+            return;
+        }
+    }
 
     if (userId) {
         pipelines.push({
