@@ -229,9 +229,10 @@ app.put('/author', async (req, res) => {
             return;
         }
 
+        const imageUrl = req.body.imageUrl === 'null' ? null : req.body.imageUrl;
         await User.findByIdAndUpdate(userId, {
             userName: req.body.userName,
-            imageUrl: req.body.imageUrl,
+            imageUrl: imageUrl,
         });
         res.send({ status: 'Saved changes' });
     } catch (e) {
