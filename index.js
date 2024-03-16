@@ -200,22 +200,18 @@ app.post('/author', async (req, res) => {
             imageUrl: req.body.imageUrl
         });
 
-        const checkByEmail = await User.findOne({ email: req.body.email });
-        if (checkByEmail) {
-            res.status(400).send("User with this email already exists");
-            return;
-        }
-        const checkByUserName = await User.findOne({ userName: req.body.userName });
-        if (checkByUserName) {
-            res.status(400).send("This user name is not available");
-            return;
-        }
-
         const model = await user.save();
         const token = session.createSession(model._id);
         res.send({ sessionId: token });
     } catch (e) {
-        res.status(500).send(e.message);
+        console.log(e)
+        if (e.code == 11000 && e.keyPattern.userName == 1) {
+            res.status(400).send('This user name is already taken');
+        } else if (e.code == 11000 && e.keyPattern.email == 1) {
+            res.status(400).send('This email is already taken');
+        } else {
+            res.status(500).send(e.message);
+        }
     } finally {
         // await client.close();
     }
