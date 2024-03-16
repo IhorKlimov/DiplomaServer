@@ -79,9 +79,17 @@ app.get('/recipes', async (req, res) => {
 })
 
 app.get('/recipe', async (req, res) => {
-    let id = req.query.id;
+    const id = req.query.id;
+    const verifyAuthor = req.query.verifyAuthor;
+    const userId = session.getUserId(req.get('session'));
+
     if (!id) {
         res.send("Missing attributes");
+        return;
+    }
+
+    if (verifyAuthor === 'true' && !userId) {
+        res.status(401).send('Unauthorized. Missing user id');
         return;
     }
 
@@ -102,7 +110,13 @@ app.get('/recipe', async (req, res) => {
                 { "$unwind": { path: "$author" } }
             ]);
         console.log(data);
-        res.send(data[0]);
+
+        const recipe = data[0];
+        if (verifyAuthor === 'true' && recipe.authorId != userId) {
+            res.status(401).send('Unauthorized. This recipe does not belog to this user');
+            return;
+        }
+        res.send(recipe);
     } catch (e) {
         res.send(e);
     } finally {
