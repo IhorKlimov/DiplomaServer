@@ -215,11 +215,35 @@ app.post('/author', async (req, res) => {
         const token = session.createSession(model._id);
         res.send({ sessionId: token });
     } catch (e) {
-
+        res.status(500).send(e.message);
     } finally {
         // await client.close();
     }
-})
+});
+
+app.put('/author', async (req, res) => {
+    try {
+        const userId = session.getUserId(req.get('session'));
+        if (!userId) {
+            res.status(401).send('Unauthorized. Missing user id');
+            return;
+        }
+
+        await User.findByIdAndUpdate(userId, {
+            userName: req.body.userName,
+            imageUrl: req.body.imageUrl,
+        });
+        res.send({ status: 'Saved changes' });
+    } catch (e) {
+        if (e.codeName == 'DuplicateKey' && e.keyPattern.userName == 1) {
+            res.status(400).send('This user name is already taken');
+        } else {
+            res.status(500).send(e.message);
+        }
+    } finally {
+        // await client.close();
+    }
+});
 
 app.post('/logIn', async (req, res) => {
     try {
