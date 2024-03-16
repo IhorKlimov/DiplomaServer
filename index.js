@@ -109,16 +109,20 @@ app.get('/recipe', async (req, res) => {
                 },
                 { "$unwind": { path: "$author" } }
             ]);
-        console.log(data);
-
         const recipe = data[0];
+        if (recipe == null) {
+            res.status(404).send('Recipe not found');
+            return;
+        }
         if (verifyAuthor === 'true' && recipe.authorId != userId) {
             res.status(401).send('Unauthorized. This recipe does not belog to this user');
             return;
         }
+
         res.send(recipe);
     } catch (e) {
-        res.send(e);
+        console.log(e)
+        res.status(500).send(e.message);
     } finally {
         // await client.close();
     }
