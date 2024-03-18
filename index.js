@@ -214,6 +214,35 @@ app.put('/recipe', async (req, res) => {
     } finally {
         // await client.close();
     }
+});
+
+app.delete('/recipe', async (req, res) => {
+    try {
+        const userId = session.getUserId(req.get('session'));
+        const recipeId = req.body.recipeId;
+        if (!userId) {
+            res.status(401).send('Unauthorized. Missing user id');
+            return;
+        }
+        if (!recipeId) {
+            res.status(400).send('Missing attributes');
+            return;
+        }
+
+        const recipe = await Recipe.findById(recipeId);
+        if (recipe.authorId != userId) {
+            res.status(401).send('Unauthorized. This recipe does not belog to this user');
+            return;
+        }
+
+        await Recipe.findByIdAndDelete(recipeId);
+
+        res.send({ status: 'Deleted recipe' });
+    } catch (e) {
+        res.status(400).send(e.message);
+    } finally {
+        // await client.close();
+    }
 })
 
 app.post('/upload', async (req, res) => {
