@@ -205,7 +205,7 @@ app.put('/recipe', async (req, res) => {
         await Recipe.findByIdAndUpdate(recipeId, {
             title: req.body.title,
             imageUrl: req.body.imageUrl,
-            description: req.body.description,
+            description: req.body.text,
         });
 
         res.send({ status: 'Saved changes' });
