@@ -84,36 +84,4 @@ module.exports = function (app) {
             // await client.close();
         }
     });
-
-    app.get('/authors', async (req, res) => {
-        try {
-            const data = await User.find();
-            res.send(data);
-        } catch (e) {
-            res.send(e);
-        } finally {
-            // await client.close();
-        }
-    });
-
-    app.get('/author', async (req, res) => {
-        try {
-            let userId = req.query.userId;
-            const getMyProfile = req.query.getMyProfile;
-            if (getMyProfile === 'true') {
-                userId = session.getUserId(req.get('session'));
-                if (!userId) {
-                    res.status(401).send('Unauthorized. Missing user id');
-                    return;
-                }
-            } else if (!userId) {
-                res.status(400).send('Missing attiributes');
-                return;
-            }
-            const user = await User.findById(userId);
-            res.send(user);
-        } catch (e) {
-            res.status(500).send(e.messsage);
-        }
-    });
 }
