@@ -34,6 +34,7 @@ app.use(express.static('public'));
 
 // Set up endpoints
 require('./endpoint/user')(app);
+require('./endpoint/authentication')(app);
 
 
 app.get("/", express.static(path.join(__dirname, "./public")));
@@ -241,24 +242,6 @@ app.post('/upload', async (req, res) => {
             return res.status(500).send(error.message);
         });
 });
-
-app.post('/logIn', async (req, res) => {
-    try {
-        let user = await User.findOne({ email: req.body.email });
-        let isAuthenticated = user != null && isPasswordValid(user.password, req.body.password);
-        if (isAuthenticated) {
-            const token = session.createSession(user._id);
-            res.send({ sessionId: token });
-        } else {
-            res.status(401).send("Wrong credentials");
-        }
-    } catch (e) {
-
-    } finally {
-
-    }
-})
-
 
 function generateHash(password) {
     return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
