@@ -33,7 +33,8 @@ app.use(cors());
 app.use(express.static('public'));
 
 // Set up endpoints
-require('./endpoint/user/user-endpoints')(app);
+require('./endpoint/user-endpoints')(app);
+
 
 app.get("/", express.static(path.join(__dirname, "./public")));
 
