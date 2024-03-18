@@ -15,8 +15,8 @@ const session = require('./session/session');
 
 
 // Database models
-const User = require('./database/schema/user');
-const Recipe = require('./database/schema/recipe');
+const User = require('./model/user');
+const Recipe = require('./model/recipe');
 const { ObjectId } = require('mongodb');
 
 
