@@ -1,4 +1,5 @@
 const User = require('../model/user');
+const session = require('../common/session');
 
 module.exports = function (app) {
 
