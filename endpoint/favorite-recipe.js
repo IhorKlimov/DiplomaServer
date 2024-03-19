@@ -21,6 +21,30 @@ module.exports = function (app) {
         }
     });
 
+    app.get('/favorite-recipe', async (req, res) => {
+        try {
+            const userId = session.getUserId(req.get('session'));
+            const recipeId = req.query.recipeId;
+
+            if (!userId) {
+                res.status(401).send('Unauthorized. Missing user id');
+                return;
+            }
+
+            if (!recipeId) {
+                res.status(400).send('Missing attributes');
+                return;
+            }
+            const existing = await FavoriteRecipe.find({
+                userId, recipeId,
+            });
+
+            res.send({ isFavorite: existing.length > 0 });
+        } catch (e) {
+            res.status(500).send(e.message);
+        }
+    });
+
 
     app.post('/favorite-recipe', async (req, res) => {
         try {
