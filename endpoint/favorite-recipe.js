@@ -67,7 +67,7 @@ module.exports = function (app) {
                 await FavoriteRecipe.findOneAndDelete({
                     userId, recipeId,
                 });
-                res.send({ status: 'Removed from favorites' });
+                res.send({ isFavorite: false });
             } else {
                 const fr = FavoriteRecipe({
                     userId: userId,
@@ -75,7 +75,7 @@ module.exports = function (app) {
                 });
 
                 const result = await fr.save();
-                res.send({ status: 'Saved to favorites' });
+                res.send({ isFavorite: true });
             }
         } catch (e) {
             res.status(500).send(e.message);
