@@ -14,8 +14,9 @@ module.exports = function (app) {
             }
 
             const result = await FavoriteRecipe.find({ userId: userId });
-            console.log(result);
-            res.send(result);
+            const list = result.map((e) => e.recipeId);
+            console.log(list);
+            res.send(list);
         } catch (e) {
             res.status(500).send(e.message);
         }
@@ -45,7 +46,6 @@ module.exports = function (app) {
         }
     });
 
-
     app.post('/favorite-recipe', async (req, res) => {
         try {
             const userId = session.getUserId(req.get('session'));
@@ -67,7 +67,7 @@ module.exports = function (app) {
                 await FavoriteRecipe.findOneAndDelete({
                     userId, recipeId,
                 });
-                res.send({ status: 'Removed favorites' });
+                res.send({ status: 'Removed from favorites' });
             } else {
                 const fr = FavoriteRecipe({
                     userId: userId,
