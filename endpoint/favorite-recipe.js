@@ -4,7 +4,7 @@ const user = require("./user");
 
 module.exports = function (app) {
 
-    app.get('/favorite-recipes', async (req, res) => {
+    app.get('/favorite-recipe-ids', async (req, res) => {
         try {
             const userId = session.getUserId(req.get('session'));
 
@@ -22,7 +22,7 @@ module.exports = function (app) {
         }
     });
 
-    app.get('/favorite-recipe', async (req, res) => {
+    app.get('/favorite-recipe-status', async (req, res) => {
         try {
             const userId = session.getUserId(req.get('session'));
             const recipeId = req.query.recipeId;
