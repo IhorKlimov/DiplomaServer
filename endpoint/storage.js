@@ -1,5 +1,6 @@
 const { mkdir } = require('node:fs/promises');
 const { v4: uuidv4 } = require('uuid');
+const port = process.env.PORT || 3000;
 
 module.exports = function (app) {
     app.post('/upload', async (req, res) => {
@@ -24,6 +25,7 @@ module.exports = function (app) {
                 res.send({ imageUrl: fullUrl });
             })
             .catch((error) => {
+                console.log(error)
                 return res.status(500).send(error.message);
             });
     });
