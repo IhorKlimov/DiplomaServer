@@ -1,6 +1,7 @@
+const { ObjectId } = require("mongodb");
 const session = require("../common/session");
 const FavoriteRecipe = require('../model/favorite-recipe');
-const user = require("./user");
+const Recipe = require('../model/recipe');
 
 module.exports = function (app) {
 
@@ -32,9 +33,25 @@ module.exports = function (app) {
             }
 
             const result = await FavoriteRecipe.find({ userId: userId });
-            const list = result.map((e) => e.recipeId);
-            console.log(list);
-            res.send(list);
+            const ids = result.map((e) => new ObjectId(e.recipeId));
+
+            const data = await Recipe.aggregate(
+                [
+                    { "$match": { "_id": { "$in": ids } } },
+                    {
+                        "$lookup": {
+                            "let": { "authorObjectId": { "$toObjectId": "$authorId" } },
+                            "from": "users",
+                            "pipeline": [
+                                { "$match": { "$expr": { "$eq": ["$_id", "$$authorObjectId"] } } },
+                            ],
+                            "as": "author"
+                        }
+                    },
+                    { "$unwind": { path: "$author" } }
+                ]).exec();
+
+            res.send(data);
         } catch (e) {
             res.status(500).send(e.message);
         }
