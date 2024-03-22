@@ -22,6 +22,7 @@ require('./endpoint/authentication')(app);
 require('./endpoint/storage')(app);
 require('./endpoint/recipe')(app);
 require('./endpoint/favorite-recipe')(app);
+require('./endpoint/review')(app);
 
 
 app.get("/", express.static(path.join(__dirname, "./public")));
