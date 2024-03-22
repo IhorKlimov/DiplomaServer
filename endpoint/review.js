@@ -42,8 +42,21 @@ module.exports = function (app) {
                 return;
             }
 
-            const result = await Review.find({ recipeId });
-            res.send(result);
+            const data = await Review.aggregate(
+                [
+                    {
+                        "$lookup": {
+                            "let": { "userIdObject": { "$toObjectId": "$userId" } },
+                            "from": "users",
+                            "pipeline": [
+                                { "$match": { "$expr": { "$eq": ["$_id", "$$userIdObject"] } } },
+                            ],
+                            "as": "user"
+                        }
+                    },
+                    { "$unwind": { path: "$user" } }
+                ]).exec();
+            res.send(data);
         } catch (error) {
             res.status(500).send(error.message);
         }
