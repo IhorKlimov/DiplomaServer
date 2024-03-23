@@ -1,6 +1,7 @@
 const { ObjectId } = require("mongodb");
 const session = require("../common/session");
 const Review = require("../model/review");
+const User = require("../model/user");
 
 
 module.exports = function (app) {
@@ -28,7 +29,25 @@ module.exports = function (app) {
             });
 
             const result = await review.save();
-            res.send({ status: 'Saved review', review: result, });
+
+            const reviewWithUser = await Review.aggregate(
+                [
+                    { "$match": { "$expr": { "$eq": ["$_id", result._id] } } },
+                    {
+                        "$lookup": {
+                            "let": { "userIdObject": { "$toObjectId": "$userId" } },
+                            "from": "users",
+                            "pipeline": [
+                                { "$match": { "$expr": { "$eq": ["$_id", "$$userIdObject"] } } },
+                            ],
+                            "as": "user"
+                        }
+                    },
+                    { "$unwind": { path: "$user" } }
+                ]).exec();
+
+
+            res.send({ status: 'Saved review', review: reviewWithUser[0], });
         } catch (error) {
             res.status(500).send(error.message);
         }
