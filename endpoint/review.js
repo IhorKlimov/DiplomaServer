@@ -64,7 +64,8 @@ module.exports = function (app) {
 
             const data = await Review.aggregate(
                 [
-                    { "$match": { "$expr": { "$eq": ["$recipeId", recipeId] } } },
+                    { "$match": { "$expr": { "$eq": ["$recipeId", recipeId] } }, },
+                    { "$sort": { "timestamp": -1, } },
                     {
                         "$lookup": {
                             "let": { "userIdObject": { "$toObjectId": "$userId" } },
