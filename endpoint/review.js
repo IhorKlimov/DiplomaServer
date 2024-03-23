@@ -1,3 +1,4 @@
+const { ObjectId } = require("mongodb");
 const session = require("../common/session");
 const Review = require("../model/review");
 
@@ -44,6 +45,7 @@ module.exports = function (app) {
 
             const data = await Review.aggregate(
                 [
+                    { "$match": { "$expr": { "$eq": ["$recipeId", recipeId] } } },
                     {
                         "$lookup": {
                             "let": { "userIdObject": { "$toObjectId": "$userId" } },
