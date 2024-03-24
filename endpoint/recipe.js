@@ -6,6 +6,7 @@ module.exports = function (app) {
     app.get('/recipes', async (req, res) => {
         let userId = req.query.userId;
         const query = req.query.query;
+        const categories = req.query.categories;
         const showMyRecipes = req.query.showMyRecipes;
 
         const pipelines = [
@@ -36,6 +37,10 @@ module.exports = function (app) {
                     ]
                 }
             });
+        }
+        if (categories) {
+            const c = categories.split(',').map(e => new ObjectId(e));
+            aggregates.push({ "$match": { "categories": { "$in": c } }, });
         }
 
         aggregates.push(
