@@ -6,7 +6,9 @@ const recipeSchema = new mongoose.Schema({
     imageUrl: { type: String, required: true },
     description: { type: String, required: true },
     categories: { type: [{ type: ObjectId, ref: 'categories', }], required: true, },
-    authorId: { type: String, required: true }
+    authorId: { type: String, required: true },
+    createdTimestamp: { type: Number, required: true },
+    updatedTimestamp: { type: Number, required: false },
 });
 const Recipe = mongoose.model('recipes', recipeSchema);
 

@@ -23,7 +23,7 @@ module.exports = function (app) {
                 userId,
                 text,
                 recipeId,
-                timestamp: new Date().getTime(),
+                createdTimestamp: new Date().getTime(),
             });
 
             const result = await review.save();

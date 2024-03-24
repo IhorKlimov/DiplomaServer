@@ -125,6 +125,7 @@ module.exports = function (app) {
                 description: req.body.text,
                 authorId: userId,
                 categories: req.body.categories,
+                createdTimestamp: new Date().getTime(),
             });
             const model = await recipe.save();
             res.send({ recipeId: model._id, });
@@ -159,6 +160,7 @@ module.exports = function (app) {
                 imageUrl: req.body.imageUrl,
                 description: req.body.text,
                 categories: req.body.categories,
+                updatedTimestamp: new Date().getTime(),
             });
 
             res.send({ status: 'Saved changes' });

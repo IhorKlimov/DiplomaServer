@@ -5,7 +5,8 @@ const reviewSchema = new mongoose.Schema({
     text: { type: String, required: true },
     userId: { type: String, required: true },
     recipeId: { type: String, required: true },
-    timestamp: { type: Number, required: true },
+    createdTimestamp: { type: Number, required: true },
+    updatedTimestamp: { type: Number, required: false },
 });
 const Review = mongoose.model('reviews', reviewSchema);
 
