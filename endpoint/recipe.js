@@ -60,6 +60,15 @@ module.exports = function (app) {
                     "as": "categories",
                 },
             },
+            {
+                "$lookup": {
+                    "from": "difficulties",
+                    "localField": "difficulty",
+                    "foreignField": "_id",
+                    "as": "difficulty",
+                },
+            },
+            { "$unwind": { path: "$difficulty" } },
             { "$unwind": { path: "$author" } }
         );
 
@@ -110,6 +119,15 @@ module.exports = function (app) {
                             "as": "categories",
                         },
                     },
+                    {
+                        "$lookup": {
+                            "from": "difficulties",
+                            "localField": "difficulty",
+                            "foreignField": "_id",
+                            "as": "difficulty",
+                        },
+                    },
+                    { "$unwind": { path: "$difficulty" } },
                     { "$unwind": { path: "$author" } }
                 ]);
             const recipe = data[0];
@@ -143,6 +161,7 @@ module.exports = function (app) {
                 imageUrl: req.body.imageUrl,
                 description: req.body.text,
                 authorId: userId,
+                difficulty: req.body.difficulty,
                 categories: req.body.categories,
                 createdTimestamp: new Date().getTime(),
             });
@@ -179,6 +198,7 @@ module.exports = function (app) {
                 imageUrl: req.body.imageUrl,
                 description: req.body.text,
                 categories: req.body.categories,
+                difficulty: req.body.difficulty,
                 updatedTimestamp: new Date().getTime(),
             });
 
