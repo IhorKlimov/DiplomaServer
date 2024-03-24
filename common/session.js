@@ -7,9 +7,7 @@ module.exports = {
     },
     getUserId: (token) => {
         try {
-            console.log(token);
             const decoded = jwt.verify(token, secret);
-            console.log(decoded);
             return decoded.userId;
         } catch (error) {
             console.log(error);

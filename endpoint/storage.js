@@ -9,7 +9,6 @@ module.exports = function (app) {
         }
 
         let file = req.files['0'];
-        console.log(file);
 
         await mkdir('public/images', { recursive: true });
 

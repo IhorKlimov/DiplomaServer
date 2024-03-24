@@ -16,7 +16,6 @@ module.exports = function (app) {
 
             const result = await FavoriteRecipe.find({ userId: userId });
             const list = result.map((e) => e.recipeId);
-            console.log(list);
             res.send(list);
         } catch (e) {
             res.status(500).send(e.message);
