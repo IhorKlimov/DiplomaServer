@@ -36,6 +36,14 @@ module.exports = function (app) {
                             "as": "author"
                         }
                     },
+                    {
+                        "$lookup": {
+                            "from": "categories",
+                            "localField": "categories",
+                            "foreignField": "_id",
+                            "as": "categories",
+                        },
+                    },
                     { "$unwind": { path: "$author" } }
                 ]).exec();
             res.send(data);
@@ -75,6 +83,14 @@ module.exports = function (app) {
                             "as": "author"
                         }
                     },
+                    {
+                        "$lookup": {
+                            "from": "categories",
+                            "localField": "categories",
+                            "foreignField": "_id",
+                            "as": "categories",
+                        },
+                    },
                     { "$unwind": { path: "$author" } }
                 ]);
             const recipe = data[0];
@@ -108,6 +124,7 @@ module.exports = function (app) {
                 imageUrl: req.body.imageUrl,
                 description: req.body.text,
                 authorId: userId,
+                categories: req.body.categories,
             });
             const model = await recipe.save();
             res.send({ recipeId: model._id, });
