@@ -5,6 +5,7 @@ const session = require('../common/session');
 module.exports = function (app) {
     app.get('/recipes', async (req, res) => {
         let userId = req.query.userId;
+        const query = req.query.query;
         const showMyRecipes = req.query.showMyRecipes;
 
         const pipelines = [
@@ -25,27 +26,40 @@ module.exports = function (app) {
             });
         }
 
+        const aggregates = [];
+        if (query) {
+            aggregates.push({
+                "$match": {
+                    "$or": [
+                        { "title": { "$regex": `.*${query}.*`, "$options": 'i' }, },
+                        { "description": { "$regex": `.*${query}.*`, "$options": 'i' }, }
+                    ]
+                }
+            });
+        }
+
+        aggregates.push(
+            {
+                "$lookup": {
+                    "let": { "authorObjectId": { "$toObjectId": "$authorId" } },
+                    "from": "users",
+                    "pipeline": pipelines,
+                    "as": "author"
+                }
+            },
+            {
+                "$lookup": {
+                    "from": "categories",
+                    "localField": "categories",
+                    "foreignField": "_id",
+                    "as": "categories",
+                },
+            },
+            { "$unwind": { path: "$author" } }
+        );
+
         try {
-            const data = await Recipe.aggregate(
-                [
-                    {
-                        "$lookup": {
-                            "let": { "authorObjectId": { "$toObjectId": "$authorId" } },
-                            "from": "users",
-                            "pipeline": pipelines,
-                            "as": "author"
-                        }
-                    },
-                    {
-                        "$lookup": {
-                            "from": "categories",
-                            "localField": "categories",
-                            "foreignField": "_id",
-                            "as": "categories",
-                        },
-                    },
-                    { "$unwind": { path: "$author" } }
-                ]).exec();
+            const data = await Recipe.aggregate(aggregates).exec();
             res.send(data);
         } catch (e) {
             res.send(e);

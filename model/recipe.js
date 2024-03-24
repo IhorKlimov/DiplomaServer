@@ -10,6 +10,7 @@ const recipeSchema = new mongoose.Schema({
     createdTimestamp: { type: Number, required: true },
     updatedTimestamp: { type: Number, required: false },
 });
+recipeSchema.index({ title: 'text', description: 'text' });
 const Recipe = mongoose.model('recipes', recipeSchema);
 
 module.exports = Recipe;
