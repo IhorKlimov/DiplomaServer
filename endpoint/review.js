@@ -1,5 +1,6 @@
 const session = require("../common/session");
 const Review = require("../model/review");
+const Recipe = require("../model/recipe");
 
 
 module.exports = function (app) {
@@ -44,6 +45,13 @@ module.exports = function (app) {
                     { "$unwind": { path: "$user" } }
                 ]).exec();
 
+            const reviews = await Review.find({ recipeId: recipeId, stars: { $ne: null } });
+            if (reviews.length != 0) {
+                let averageRating = reviews.reduce((acc, curr) => acc + curr.stars, 0) / reviews.length;
+                averageRating = averageRating.toFixed(1);
+
+                await Recipe.findByIdAndUpdate(recipeId, { rating: averageRating, })
+            }
 
             res.send({ status: 'Saved review', review: reviewWithUser[0], });
         } catch (error) {
