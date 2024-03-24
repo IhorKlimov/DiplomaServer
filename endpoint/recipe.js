@@ -7,6 +7,7 @@ module.exports = function (app) {
         let userId = req.query.userId;
         const query = req.query.query;
         const categories = req.query.categories;
+        const difficulty = req.query.difficulty;
         const showMyRecipes = req.query.showMyRecipes;
 
         const pipelines = [
@@ -41,6 +42,9 @@ module.exports = function (app) {
         if (categories) {
             const c = categories.split(',').map(e => new ObjectId(e));
             aggregates.push({ "$match": { "categories": { "$in": c } }, });
+        }
+        if (difficulty) {
+            aggregates.push({ "$match": { "difficulty": { "$eq": new ObjectId(difficulty) } }, });
         }
 
         aggregates.push(
