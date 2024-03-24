@@ -1,5 +1,4 @@
 const express = require('express');
-// const { MongoClient } = require("mongodb");
 const cors = require('cors');
 const path = require("path");
 const mongoose = require('mongoose');
@@ -12,7 +11,7 @@ mongoose.connect(uri);
 
 
 app.use(fileUpload());
-app.use(express.urlencoded());
+app.use(express.json());
 app.use(cors());
 app.use(express.static('public'));
 

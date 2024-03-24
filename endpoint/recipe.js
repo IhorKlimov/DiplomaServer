@@ -118,7 +118,6 @@ module.exports = function (app) {
         }
     });
 
-
     app.put('/recipe', async (req, res) => {
         try {
             const userId = session.getUserId(req.get('session'));
@@ -142,6 +141,7 @@ module.exports = function (app) {
                 title: req.body.title,
                 imageUrl: req.body.imageUrl,
                 description: req.body.text,
+                categories: req.body.categories,
             });
 
             res.send({ status: 'Saved changes' });
