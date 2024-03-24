@@ -4,14 +4,10 @@ module.exports = function (app) {
     app.post('/difficulty', async (req, res) => {
         try {
             const name = req.body.name;
-
-            if (!name) {
-                res.status(400).send('Missing attributes');
-                return;
-            }
+            const value = req.body.value;
 
             const difficulty = Difficulty({
-                name,
+                name, value,
             });
 
             await difficulty.save();
