@@ -24,6 +24,7 @@ require('./endpoint/favorite-recipe')(app);
 require('./endpoint/review')(app);
 require('./endpoint/category')(app);
 require('./endpoint/difficulty')(app);
+require('./endpoint/sort-option')(app);
 
 
 app.get("/", express.static(path.join(__dirname, "./public")));
