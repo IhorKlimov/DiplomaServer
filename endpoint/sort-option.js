@@ -4,14 +4,11 @@ module.exports = function (app) {
     app.post('/sort-option', async (req, res) => {
         try {
             const name = req.body.name;
-
-            if (!name) {
-                res.status(400).send('Missing attributes');
-                return;
-            }
+            const field = req.body.field;
+            const order = req.body.order;
 
             const sortOption = SortOption({
-                name,
+                name, field, order,
             });
 
             await sortOption.save();

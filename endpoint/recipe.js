@@ -1,6 +1,7 @@
 const Recipe = require('../model/recipe');
 const { ObjectId } = require('mongodb');
 const session = require('../common/session');
+const SortOption = require('../model/sort-option');
 
 module.exports = function (app) {
     app.get('/recipes', async (req, res) => {
@@ -9,6 +10,7 @@ module.exports = function (app) {
         const categories = req.query.categories;
         const difficulty = req.query.difficulty;
         const showMyRecipes = req.query.showMyRecipes;
+        const sortBy = req.query.sortBy;
 
         const pipelines = [
             { "$match": { "$expr": { "$eq": ["$_id", "$$authorObjectId"] } } },
@@ -45,6 +47,18 @@ module.exports = function (app) {
         }
         if (difficulty) {
             aggregates.push({ "$match": { "difficulty": { "$eq": new ObjectId(difficulty) } }, });
+        }
+        if (sortBy) {
+            const sortOption = await SortOption.findById(sortBy);
+            if (sortOption.field.indexOf('&') != -1) {
+                const s = {};
+                sortOption.field.split('&').forEach((e) => {
+                    s[e] = sortOption.order;
+                });
+                aggregates.push({ "$sort": s },);
+            } else {
+                aggregates.push({ "$sort": { [sortOption.field]: sortOption.order, } },);
+            }
         }
 
         aggregates.push(
