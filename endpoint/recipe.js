@@ -168,6 +168,7 @@ module.exports = function (app) {
                 difficulty: req.body.difficulty,
                 categories: req.body.categories,
                 createdTimestamp: new Date().getTime(),
+                updatedTimestamp: new Date().getTime(),
             });
             const model = await recipe.save();
             res.send({ recipeId: model._id, });
