@@ -181,6 +181,7 @@ module.exports = function (app) {
                 authorId: userId,
                 difficulty: req.body.difficulty,
                 categories: req.body.categories,
+                servings: req.body.servings,
                 createdTimestamp: new Date().getTime(),
                 updatedTimestamp: new Date().getTime(),
             });
@@ -217,6 +218,7 @@ module.exports = function (app) {
                 imageUrl: req.body.imageUrl,
                 description: req.body.text,
                 categories: req.body.categories,
+                servings: req.body.servings,
                 difficulty: req.body.difficulty,
                 updatedTimestamp: new Date().getTime(),
             });

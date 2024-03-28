@@ -9,6 +9,7 @@ const recipeSchema = new mongoose.Schema({
     difficulty: { type: ObjectId, ref: 'difficulties', required: true, },
     authorId: { type: String, required: true },
     rating: { type: Number, required: false, },
+    servings: { type: Number, required: false, },
     createdTimestamp: { type: Number, required: true },
     updatedTimestamp: { type: Number, required: false },
 });
