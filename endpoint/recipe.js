@@ -86,6 +86,14 @@ module.exports = function (app) {
                     "as": "difficulty",
                 },
             },
+            {
+                "$lookup": {
+                    "from": "cookingmethods",
+                    "localField": "cookingMethods",
+                    "foreignField": "_id",
+                    "as": "cookingMethods",
+                },
+            },
             { "$unwind": { path: "$difficulty" } },
             { "$unwind": { path: "$author" } }
         );
@@ -145,6 +153,14 @@ module.exports = function (app) {
                             "as": "difficulty",
                         },
                     },
+                    {
+                        "$lookup": {
+                            "from": "cookingmethods",
+                            "localField": "cookingMethods",
+                            "foreignField": "_id",
+                            "as": "cookingMethods",
+                        },
+                    },
                     { "$unwind": { path: "$difficulty" } },
                     { "$unwind": { path: "$author" } }
                 ]);
@@ -181,6 +197,7 @@ module.exports = function (app) {
                 authorId: userId,
                 difficulty: req.body.difficulty,
                 categories: req.body.categories,
+                cookingMethods: req.body.cookingMethods,
                 servings: req.body.servings,
                 createdTimestamp: new Date().getTime(),
                 updatedTimestamp: new Date().getTime(),
@@ -219,6 +236,7 @@ module.exports = function (app) {
                 description: req.body.text,
                 categories: req.body.categories,
                 servings: req.body.servings,
+                cookingMethods: req.body.cookingMethods,
                 difficulty: req.body.difficulty,
                 updatedTimestamp: new Date().getTime(),
             });
