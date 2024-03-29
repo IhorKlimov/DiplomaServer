@@ -8,6 +8,7 @@ module.exports = function (app) {
         let userId = req.query.userId;
         const query = req.query.query;
         const categories = req.query.categories;
+        const cookingMethods = req.query.cookingMethods;
         const difficulty = req.query.difficulty;
         const showMyRecipes = req.query.showMyRecipes;
         const sortBy = req.query.sortBy;
@@ -44,6 +45,10 @@ module.exports = function (app) {
         if (categories) {
             const c = categories.split(',').map(e => new ObjectId(e));
             aggregates.push({ "$match": { "categories": { "$in": c } }, });
+        }
+        if (cookingMethods) {
+            const c = cookingMethods.split(',').map(e => new ObjectId(e));
+            aggregates.push({ "$match": { "cookingMethods": { "$in": c } }, });
         }
         if (difficulty) {
             aggregates.push({ "$match": { "difficulty": { "$eq": new ObjectId(difficulty) } }, });
