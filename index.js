@@ -31,5 +31,5 @@ require('./endpoint/cooking-method')(app);
 app.get("/", express.static(path.join(__dirname, "./public")));
 
 app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`)
+    console.log(`Server listening on port ${port}`)
 });

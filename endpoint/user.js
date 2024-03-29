@@ -1,5 +1,7 @@
 const User = require('../model/user');
 const session = require('../common/session');
+const utils = require('../common/utils');
+const AccountDetails = require('../model/account-details');
 
 module.exports = function (app) {
 
@@ -40,11 +42,15 @@ module.exports = function (app) {
             const user = User({
                 userName: req.body.userName,
                 email: req.body.email,
-                password: generateHash(req.body.password),
                 imageUrl: req.body.imageUrl
             });
 
             const model = await user.save();
+            const accountDetails = AccountDetails({
+                userId: model._id,
+                password: utils.generateHash(req.body.password),
+            });
+            await accountDetails.save();
             const token = session.createSession(model._id);
             res.send({ sessionId: token });
         } catch (e) {
