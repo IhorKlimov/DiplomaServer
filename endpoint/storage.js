@@ -1,5 +1,6 @@
 const { mkdir } = require('node:fs/promises');
 const { v4: uuidv4 } = require('uuid');
+const sharp = require('sharp');
 const port = process.env.PORT || 3000;
 
 module.exports = function (app) {
@@ -13,19 +14,19 @@ module.exports = function (app) {
         await mkdir('public/images', { recursive: true });
 
         const newFileName = `${uuidv4()}${file.name.substring(file.name.lastIndexOf('.'), file.name.length)}`;
-
-        file.mv(`public/images/${newFileName}`)
+        await sharp(file.data)
+            .jpeg({ quality: 60 })
+            .toFile(`public/images/${newFileName}`)
             .then(() => {
                 const protocol = req.protocol;
                 const host = req.hostname;
-
                 const fullUrl = `${protocol}://${host}:${port}/images/${newFileName}`;
 
                 res.send({ imageUrl: fullUrl });
             })
-            .catch((error) => {
-                console.log(error)
-                return res.status(500).send(error.message);
+            .catch((e) => {
+                console.log(e);
+                res.status(500).send(e.message);
             });
     });
 
