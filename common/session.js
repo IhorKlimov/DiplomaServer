@@ -1,5 +1,6 @@
 var jwt = require('jsonwebtoken');
-const secret = 'shhhhh';
+require('dotenv').config();
+const secret = process.env.SECRET;
 
 module.exports = {
     createSession: (userId) => {

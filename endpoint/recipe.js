@@ -16,8 +16,17 @@ module.exports = function (app) {
         const sortBy = req.query.sortBy;
         const page = req.query.page;
 
+
+        if (showMyRecipes === 'true') {
+            userId = session.getUserId(req.get('session'));
+            if (!userId) {
+                res.status(401).send('Unauthorized. Missing user id');
+                return;
+            }
+        }
+
         const aggregates = await buildAggregate(userId, query, categories, cookingMethods, difficulty, showMyRecipes, sortBy, page);
-        
+
         try {
             const data = await Recipe.aggregate(aggregates).exec();
             res.send(data[0]);
@@ -204,14 +213,6 @@ async function buildAggregate(userId, query, categories, cookingMethods, difficu
     const pipelines = [
         { "$match": { "$expr": { "$eq": ["$_id", "$$authorObjectId"] } } },
     ];
-
-    if (showMyRecipes === 'true') {
-        userId = session.getUserId(req.get('session'));
-        if (!userId) {
-            res.status(401).send('Unauthorized. Missing user id');
-            return;
-        }
-    }
 
     if (userId) {
         pipelines.push({
