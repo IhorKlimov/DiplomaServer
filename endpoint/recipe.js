@@ -2,6 +2,8 @@ const Recipe = require('../model/recipe');
 const { ObjectId } = require('mongodb');
 const session = require('../common/session');
 const SortOption = require('../model/sort-option');
+const pageSize = 12;
+
 
 module.exports = function (app) {
     app.get('/recipes', async (req, res) => {
@@ -12,6 +14,7 @@ module.exports = function (app) {
         const difficulty = req.query.difficulty;
         const showMyRecipes = req.query.showMyRecipes;
         const sortBy = req.query.sortBy;
+        const page = req.query.page;
 
         const pipelines = [
             { "$match": { "$expr": { "$eq": ["$_id", "$$authorObjectId"] } } },
@@ -100,18 +103,46 @@ module.exports = function (app) {
                 },
             },
             { "$unwind": { path: "$difficulty" } },
-            { "$unwind": { path: "$author" } }
+            { "$unwind": { path: "$author" } },
+            {
+                $facet: {
+                    results: [
+                        { $skip: (page - 1) * pageSize },
+                        { $limit: pageSize },
+                    ],
+                    count: [
+                        { $group: { _id: null, count: { $sum: 1 } } }
+                    ]
+                }
+            },
+            {
+                $project: {
+                    count: { $arrayElemAt: ['$count.count', 0] },
+                    recipes: '$results'
+                }
+            },
+            {
+                $addFields: {
+                    hasMoreData: {
+                        $cond: {
+                            if: { $gt: ['$count', (page * pageSize)] },
+                            then: true,
+                            else: false
+                        }
+                    }
+                }
+            },
         );
 
         try {
             const data = await Recipe.aggregate(aggregates).exec();
-            res.send(data);
+            res.send(data[0]);
         } catch (e) {
             res.send(e);
         } finally {
             // await client.close();
         }
-    })
+    });
 
     app.get('/recipe', async (req, res) => {
         const id = req.query.id;
