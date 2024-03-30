@@ -3,11 +3,13 @@ const cors = require('cors');
 const path = require("path");
 const mongoose = require('mongoose');
 const fileUpload = require('express-fileupload');
+require('dotenv').config();
 
 const app = express();
 const port = process.env.PORT || 3000;
-const uri = "mongodb://localhost:27017/test";
-mongoose.connect(uri);
+const dbUrl = process.env.DB_URL;
+console.log(dbUrl);
+mongoose.connect(dbUrl);
 
 
 app.use(fileUpload());
