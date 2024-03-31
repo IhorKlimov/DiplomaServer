@@ -10,11 +10,9 @@ const isProd = process.env.IS_PROD;
 const serviceAccount = require('../serviceAccount.json');
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
-    "storageBucket": "diploma-51ca4.appspot.com",
+    storageBucket: serviceAccount.storage_bucket,
 });
 const bucket = getStorage().bucket();
-
-console.log(typeof(isProd));
 
 module.exports = function (app) {
     app.post('/upload', async (req, res) => {
