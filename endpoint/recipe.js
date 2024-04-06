@@ -133,6 +133,7 @@ module.exports = function (app) {
                 title: req.body.title,
                 imageUrl: req.body.imageUrl,
                 description: req.body.text,
+                ingredients: req.body.ingredients,
                 authorId: userId,
                 difficulty: req.body.difficulty,
                 categories: req.body.categories,
@@ -186,6 +187,7 @@ module.exports = function (app) {
                 title: req.body.title,
                 imageUrl: req.body.imageUrl,
                 description: req.body.text,
+                ingredients: req.body.ingredients,
                 categories: req.body.categories,
                 servings: req.body.servings,
                 cookingMethods: req.body.cookingMethods,
@@ -257,7 +259,8 @@ async function buildAggregate(userId, query, categories, cookingMethods, difficu
             "$match": {
                 "$or": [
                     { "title": { "$regex": `.*${query}.*`, "$options": 'i' }, },
-                    { "description": { "$regex": `.*${query}.*`, "$options": 'i' }, }
+                    { "description": { "$regex": `.*${query}.*`, "$options": 'i' }, },
+                    { "ingredients": { "$regex": `.*${query}.*`, "$options": 'i' }, }
                 ]
             }
         });
@@ -273,7 +276,7 @@ async function buildAggregate(userId, query, categories, cookingMethods, difficu
     if (difficulty) {
         aggregates.push({ "$match": { "difficulty": { "$eq": new ObjectId(difficulty) } }, });
     }
-    
+
 
     aggregates.push(
         {
