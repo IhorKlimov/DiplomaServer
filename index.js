@@ -29,6 +29,7 @@ require('./endpoint/category')(app);
 require('./endpoint/difficulty')(app);
 require('./endpoint/sort-option')(app);
 require('./endpoint/cooking-method')(app);
+require('./endpoint/cooking-time')(app);
 
 
 app.get("/", express.static(path.join(__dirname, "./public")));

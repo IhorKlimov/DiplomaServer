@@ -2,6 +2,7 @@ const Recipe = require('../model/recipe');
 const { ObjectId } = require('mongodb');
 const session = require('../common/session');
 const SortOption = require('../model/sort-option');
+const CookingTime = require('../model/cooking-time');
 const pageSize = 12;
 
 
@@ -90,7 +91,16 @@ module.exports = function (app) {
                             "as": "cookingMethods",
                         },
                     },
+                    {
+                        "$lookup": {
+                            "from": "cookingtimes",
+                            "localField": "_id",
+                            "foreignField": "recipeId",
+                            "as": "cookingTime",
+                        },
+                    },
                     { "$unwind": { path: "$difficulty" } },
+                    { "$unwind": { path: "$cookingTime" } },
                     { "$unwind": { path: "$author" } }
                 ]);
             const recipe = data[0];
@@ -132,6 +142,19 @@ module.exports = function (app) {
                 updatedTimestamp: new Date().getTime(),
             });
             const model = await recipe.save();
+
+            console.log(req.body.prep);
+            console.log(req.body.cooking);
+            console.log(req.body.prep + req.body.cooking);
+
+            const cookingTime = CookingTime({
+                recipeId: model._id,
+                prep: req.body.prep,
+                cooking: req.body.cooking,
+                total: req.body.prep + req.body.cooking,
+            });
+            await cookingTime.save();
+
             res.send({ recipeId: model._id, });
         } catch (e) {
             res.status(400).send(e.message);
@@ -169,6 +192,13 @@ module.exports = function (app) {
                 difficulty: req.body.difficulty,
                 updatedTimestamp: new Date().getTime(),
             });
+            await CookingTime.findOneAndUpdate({ recipeId }, {
+                prep: req.body.prep,
+                cooking: req.body.cooking,
+                total: req.body.prep + req.body.cooking,
+            }, {
+                upsert: true,
+            });
 
             res.send({ status: 'Saved changes' });
         } catch (e) {
@@ -198,6 +228,7 @@ module.exports = function (app) {
             }
 
             await Recipe.findByIdAndDelete(recipeId);
+            await CookingTime.findOneAndDelete({ recipeId });
 
             res.send({ status: 'Deleted recipe' });
         } catch (e) {
@@ -282,6 +313,14 @@ async function buildAggregate(userId, query, categories, cookingMethods, difficu
         },
         {
             "$lookup": {
+                "from": "cookingtimes",
+                "localField": "_id",
+                "foreignField": "recipeId",
+                "as": "cookingTime",
+            },
+        },
+        {
+            "$lookup": {
                 "from": "cookingmethods",
                 "localField": "cookingMethods",
                 "foreignField": "_id",
@@ -290,6 +329,7 @@ async function buildAggregate(userId, query, categories, cookingMethods, difficu
         },
         { "$unwind": { path: "$difficulty" } },
         { "$unwind": { path: "$author" } },
+        { "$unwind": { path: "$cookingTime" } },
         {
             $facet: {
                 results: [
