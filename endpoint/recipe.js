@@ -273,18 +273,7 @@ async function buildAggregate(userId, query, categories, cookingMethods, difficu
     if (difficulty) {
         aggregates.push({ "$match": { "difficulty": { "$eq": new ObjectId(difficulty) } }, });
     }
-    if (sortBy) {
-        const sortOption = await SortOption.findById(sortBy);
-        if (sortOption.field.indexOf('&') != -1) {
-            const s = {};
-            sortOption.field.split('&').forEach((e) => {
-                s[e] = sortOption.order;
-            });
-            aggregates.push({ "$sort": s },);
-        } else {
-            aggregates.push({ "$sort": { [sortOption.field]: sortOption.order, } },);
-        }
-    }
+    
 
     aggregates.push(
         {
@@ -330,6 +319,23 @@ async function buildAggregate(userId, query, categories, cookingMethods, difficu
         { "$unwind": { path: "$difficulty" } },
         { "$unwind": { path: "$author" } },
         { "$unwind": { path: "$cookingTime" } },
+    );
+
+    if (sortBy) {
+        const sortOption = await SortOption.findById(sortBy);
+        console.log(sortOption.field)
+        if (sortOption.field.indexOf('&') != -1) {
+            const s = {};
+            sortOption.field.split('&').forEach((e) => {
+                s[e] = sortOption.order;
+            });
+            aggregates.push({ "$sort": s },);
+        } else {
+            aggregates.push({ "$sort": { [sortOption.field]: sortOption.order, } },);
+        }
+    }
+
+    aggregates.push(
         {
             $facet: {
                 results: [
