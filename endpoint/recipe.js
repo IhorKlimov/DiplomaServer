@@ -3,6 +3,7 @@ const { ObjectId } = require('mongodb');
 const session = require('../common/session');
 const SortOption = require('../model/sort-option');
 const CookingTime = require('../model/cooking-time');
+const Subscription = require('../model/subscription');
 const pageSize = 12;
 
 
@@ -14,6 +15,7 @@ module.exports = function (app) {
         const cookingMethods = req.query.cookingMethods;
         const difficulty = req.query.difficulty;
         const showMyRecipes = req.query.showMyRecipes;
+        const fromMySubscriptionsOnly = req.query.fromMySubscriptionsOnly;
         const sortBy = req.query.sortBy;
         const page = req.query.page;
 
@@ -25,8 +27,16 @@ module.exports = function (app) {
                 return;
             }
         }
+        let forUserIdSubscriptions = null;
+        if (fromMySubscriptionsOnly === 'true') {
+            forUserIdSubscriptions = session.getUserId(req.get('session'));
+            if (!forUserIdSubscriptions) {
+                res.status(401).send('Unauthorized. Missing user id');
+                return;
+            }
+        }
 
-        const aggregates = await buildAggregate(userId, query, categories, cookingMethods, difficulty, showMyRecipes, sortBy, page);
+        const aggregates = await buildAggregate(userId, forUserIdSubscriptions, query, categories, cookingMethods, difficulty, sortBy, page);
 
         try {
             const data = await Recipe.aggregate(aggregates).exec();
@@ -242,7 +252,7 @@ module.exports = function (app) {
 
 }
 
-async function buildAggregate(userId, query, categories, cookingMethods, difficulty, showMyRecipes, sortBy, page) {
+async function buildAggregate(userId, forUserIdSubscriptions, query, categories, cookingMethods, difficulty, sortBy, page) {
     const pipelines = [
         { "$match": { "$expr": { "$eq": ["$_id", "$$authorObjectId"] } } },
     ];
@@ -276,7 +286,14 @@ async function buildAggregate(userId, query, categories, cookingMethods, difficu
     if (difficulty) {
         aggregates.push({ "$match": { "difficulty": { "$eq": new ObjectId(difficulty) } }, });
     }
-
+    if (forUserIdSubscriptions) {
+        let subscriptions = await Subscription.find({ userId: forUserIdSubscriptions });
+        subscriptions = subscriptions.map((v) => `${v.followingUserId}`);
+        aggregates.push(
+            { "$match": { "authorId": { "$in": subscriptions } } },
+            { "$sort": { ['updatedTimestamp']: -1, } },
+        );
+    }
 
     aggregates.push(
         {

@@ -20,6 +20,52 @@ module.exports = function (app) {
         }
     });
 
+    app.get('/subscriptions', async (req, res) => {
+        try {
+            const userId = session.getUserId(req.get('session'));
+
+            if (!userId) {
+                res.status(401).send('Unauthorized. Missing user id');
+                return;
+            }
+
+            const result = await Subscription.aggregate([
+                { $match: { $expr: { $eq: ['$userId', { $toObjectId: userId }] } } },
+                {
+                    $lookup: {
+                        from: 'users',
+                        localField: 'followingUserId',
+                        foreignField: '_id',
+                        as: 'user'
+                    }
+                },
+                { $unwind: { path: "$user" } },
+                { $replaceRoot: { newRoot: "$user" } }
+            ]);
+
+            res.send(result);
+        } catch (e) {
+            res.status(500).send(e.message);
+        }
+    });
+
+    app.get('/subscription-ids', async (req, res) => {
+        try {
+            const userId = session.getUserId(req.get('session'));
+
+            if (!userId) {
+                res.status(401).send('Unauthorized. Missing user id');
+                return;
+            }
+
+            const result = await Subscription.find({ userId });
+            const list = result.map((e) => e.followingUserId);
+            res.send(list);
+        } catch (e) {
+            res.status(500).send(e.message);
+        }
+    });
+
     app.get('/subscription-status', async (req, res) => {
         try {
             const userId = session.getUserId(req.get('session'));
