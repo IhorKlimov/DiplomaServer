@@ -9,8 +9,8 @@ const app = express();
 const port = process.env.PORT || 3000;
 const dbUrl = process.env.DB_URL;
 mongoose.connect(dbUrl);
-console.log('db url '+ dbUrl)
-console.log('Is prod: '+ process.env.IS_PROD)
+console.log('db url ' + dbUrl)
+console.log('Is prod: ' + process.env.IS_PROD)
 
 
 app.use(fileUpload());

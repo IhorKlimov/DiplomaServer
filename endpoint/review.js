@@ -25,6 +25,7 @@ module.exports = function (app) {
                 text,
                 recipeId,
                 createdTimestamp: new Date().getTime(),
+                updatedTimestamp: new Date().getTime(),
             });
 
             const result = await review.save();
@@ -71,7 +72,7 @@ module.exports = function (app) {
             const data = await Review.aggregate(
                 [
                     { "$match": { "$expr": { "$eq": ["$recipeId", recipeId] } }, },
-                    { "$sort": { "timestamp": -1, } },
+                    { "$sort": { "updatedTimestamp": -1, } },
                     {
                         "$lookup": {
                             "let": { "userIdObject": { "$toObjectId": "$userId" } },
