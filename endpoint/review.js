@@ -1,7 +1,7 @@
 const session = require("../common/session");
 const Review = require("../model/review");
 const Recipe = require("../model/recipe");
-
+const NotificationController = require("../controller/notification");
 
 module.exports = function (app) {
     app.post('/review', async (req, res) => {
@@ -28,7 +28,7 @@ module.exports = function (app) {
             });
 
             const result = await review.save();
-
+            await NotificationController.createNotificationForReview(userId, recipeId);
             const reviewWithUser = await Review.aggregate(
                 [
                     { "$match": { "$expr": { "$eq": ["$_id", result._id] } } },

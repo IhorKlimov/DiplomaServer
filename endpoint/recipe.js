@@ -4,6 +4,7 @@ const session = require('../common/session');
 const SortOption = require('../model/sort-option');
 const CookingTime = require('../model/cooking-time');
 const Subscription = require('../model/subscription');
+const NotificationController = require("../controller/notification");
 const pageSize = 12;
 
 
@@ -165,6 +166,7 @@ module.exports = function (app) {
                 total: req.body.prep + req.body.cooking,
             });
             await cookingTime.save();
+            await NotificationController.createNotificationForRecipe(userId, model._id);
 
             res.send({ recipeId: model._id, });
         } catch (e) {
@@ -289,6 +291,7 @@ async function buildAggregate(userId, forUserIdSubscriptions, query, categories,
     if (forUserIdSubscriptions) {
         let subscriptions = await Subscription.find({ userId: forUserIdSubscriptions });
         subscriptions = subscriptions.map((v) => `${v.followingUserId}`);
+        console.log(subscriptions)
         aggregates.push(
             { "$match": { "authorId": { "$in": subscriptions } } },
             { "$sort": { ['updatedTimestamp']: -1, } },
