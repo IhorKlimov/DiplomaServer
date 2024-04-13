@@ -19,6 +19,8 @@ module.exports = function (app) {
         if (!req.files || Object.keys(req.files).length === 0) {
             return res.status(400).send('No files were uploaded.');
         }
+        const isProfileImage = req.body.isProfileImage;
+        const size = isProfileImage == 'true' ? 200 : 600;
 
         try {
             let file = req.files['0'];
@@ -27,6 +29,7 @@ module.exports = function (app) {
                 const newFileName = `${uuidv4()}${file.name.substring(file.name.lastIndexOf('.'), file.name.length)}`;
                 const buffer = await sharp(file.data)
                     .jpeg({ quality: 60 })
+                    .resize(size)
                     .toBuffer();
 
                 await bucket.file(newFileName).save(buffer);
@@ -40,6 +43,7 @@ module.exports = function (app) {
                 const newFileName = `${uuidv4()}${file.name.substring(file.name.lastIndexOf('.'), file.name.length)}`;
                 await sharp(file.data)
                     .jpeg({ quality: 60 })
+                    .resize(size)
                     .toFile(`public/images/${newFileName}`);
 
                 const protocol = req.protocol;
