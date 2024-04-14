@@ -36,6 +36,15 @@ require('./endpoint/review-like')(app);
 
 
 app.get("/", express.static(path.join(__dirname, "./public")));
+app.get('/hello', async (req, res) => {
+    try {
+        res.send("Hello");
+    } catch (e) {
+        res.send(e);
+    } finally {
+        // await client.close();
+    }
+});
 
 app.listen(port, () => {
     console.log(`Server listening on port ${port}`)
