@@ -271,7 +271,6 @@ async function buildAggregate(userId, forUserIdSubscriptions, query, categories,
             "$match": {
                 "$or": [
                     { "title": { "$regex": `.*${query}.*`, "$options": 'i' }, },
-                    { "description": { "$regex": `.*${query}.*`, "$options": 'i' }, },
                     { "ingredients": { "$regex": `.*${query}.*`, "$options": 'i' }, }
                 ]
             }
