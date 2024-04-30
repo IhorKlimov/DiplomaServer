@@ -14,7 +14,7 @@ module.exports = {
         const user = await User.findById(fromUserId);
         const notification = Notification({
             userId: recipe.authorId,
-            text: `${user.userName} left a review for you recipe`,
+            text: `${user.userName} залишив(ла) відгук на ваш рецепт`,
             href: `/recipe/${recipeId}`,
             isRead: false,
             timestamp: new Date().getTime()
@@ -29,7 +29,7 @@ module.exports = {
             const subscription = subscriptions[s];
             const notification = Notification({
                 userId: subscription.userId,
-                text: `${user.userName} created a new recipe!`,
+                text: `${user.userName} створив(ла) новий рецепт!`,
                 href: `/recipe/${recipeId}`,
                 isRead: false,
                 timestamp: new Date().getTime()
