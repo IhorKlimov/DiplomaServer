@@ -56,9 +56,9 @@ module.exports = function (app) {
         } catch (e) {
             console.log(e)
             if (e.code == 11000 && e.keyPattern.userName == 1) {
-                res.status(400).send('This user name is already taken');
+                res.status(400).send('Це ім\'я користувача вже зайняте');
             } else if (e.code == 11000 && e.keyPattern.email == 1) {
-                res.status(400).send('This email is already taken');
+                res.status(400).send('Ця електронна адреса вже зайнята');
             } else {
                 res.status(500).send(e.message);
             }
@@ -79,7 +79,7 @@ module.exports = function (app) {
                     const token = session.createSession(existingUser._id);
                     res.send({ sessionId: token });
                 } else {
-                    res.status(400).send('This email is already taken');
+                    res.status(400).send('Ця електронна адреса вже зайнята');
                 }
                 return;
             }
@@ -101,9 +101,9 @@ module.exports = function (app) {
         } catch (e) {
             console.log(e)
             if (e.code == 11000 && e.keyPattern.userName == 1) {
-                res.status(400).send('This user name is already taken');
+                res.status(400).send('Це ім\'я користувача вже зайняте');
             } else if (e.code == 11000 && e.keyPattern.email == 1) {
-                res.status(400).send('This email is already taken');
+                res.status(400).send('Ця електронна адреса вже зайнята');
             } else {
                 res.status(500).send(e.message);
             }
@@ -128,7 +128,7 @@ module.exports = function (app) {
             res.send({ status: 'Saved changes' });
         } catch (e) {
             if (e.codeName == 'DuplicateKey' && e.keyPattern.userName == 1) {
-                res.status(400).send('This user name is already taken');
+                res.status(400).send('Це ім\'я користувача вже зайняте');
             } else {
                 res.status(500).send(e.message);
             }
