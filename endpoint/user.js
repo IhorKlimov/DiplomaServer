@@ -67,6 +67,51 @@ module.exports = function (app) {
         }
     });
 
+    app.post('/social-sign-in', async (req, res) => {
+        try {
+            let existingUser = await User.find({ email: req.body.email });
+            existingUser = existingUser[0];
+            if (existingUser) {
+                let details = await AccountDetails.find({ userId: existingUser._id });
+                details = details[0];
+
+                if (details.provider == req.body.provider) {
+                    const token = session.createSession(existingUser._id);
+                    res.send({ sessionId: token });
+                } else {
+                    res.status(400).send('This email is already taken');
+                }
+                return;
+            }
+
+            const user = User({
+                userName: req.body.userName,
+                email: req.body.email,
+                imageUrl: req.body.imageUrl
+            });
+
+            const model = await user.save();
+            const accountDetails = AccountDetails({
+                userId: model._id,
+                provider: req.body.provider,
+            });
+            await accountDetails.save();
+            const token = session.createSession(model._id);
+            res.send({ sessionId: token });
+        } catch (e) {
+            console.log(e)
+            if (e.code == 11000 && e.keyPattern.userName == 1) {
+                res.status(400).send('This user name is already taken');
+            } else if (e.code == 11000 && e.keyPattern.email == 1) {
+                res.status(400).send('This email is already taken');
+            } else {
+                res.status(500).send(e.message);
+            }
+        } finally {
+            // await client.close();
+        }
+    });
+
     app.put('/author', async (req, res) => {
         try {
             const userId = session.getUserId(req.get('session'));
