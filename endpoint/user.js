@@ -2,6 +2,12 @@ const User = require('../model/user');
 const session = require('../common/session');
 const utils = require('../common/utils');
 const AccountDetails = require('../model/account-details');
+const Review = require('../model/review');
+const FavoriteRecipe = require('../model/favorite-recipe');
+const Notification = require('../model/notification');
+const Recipe = require('../model/recipe');
+const Subscription = require('../model/subscription');
+const ReviewLike = require('../model/review-like');
 
 module.exports = function (app) {
 
@@ -132,6 +138,31 @@ module.exports = function (app) {
             } else {
                 res.status(500).send(e.message);
             }
+        } finally {
+            // await client.close();
+        }
+    });
+
+    app.delete('/author', async (req, res) => {
+        try {
+            const userId = session.getUserId(req.get('session'));
+            if (!userId) {
+                res.status(401).send('Unauthorized. Missing user id');
+                return;
+            }
+
+            await User.findByIdAndDelete(userId);
+            await AccountDetails.findOneAndDelete({ userId });
+            await Review.deleteMany({ userId });
+            await FavoriteRecipe.deleteMany({ userId });
+            await Notification.deleteMany({ userId });
+            await Recipe.deleteMany({ userId });
+            await Subscription.deleteMany({ userId });
+            await ReviewLike.deleteMany({ userId });
+
+            res.send({ status: 'User deleted' });
+        } catch (e) {
+            res.status(500).send(e.message);
         } finally {
             // await client.close();
         }
