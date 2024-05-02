@@ -155,10 +155,6 @@ module.exports = function (app) {
             });
             const model = await recipe.save();
 
-            console.log(req.body.prep);
-            console.log(req.body.cooking);
-            console.log(req.body.prep + req.body.cooking);
-
             const cookingTime = CookingTime({
                 recipeId: model._id,
                 prep: req.body.prep,
@@ -290,7 +286,6 @@ async function buildAggregate(userId, forUserIdSubscriptions, query, categories,
     if (forUserIdSubscriptions) {
         let subscriptions = await Subscription.find({ userId: forUserIdSubscriptions });
         subscriptions = subscriptions.map((v) => `${v.followingUserId}`);
-        console.log(subscriptions)
         aggregates.push(
             { "$match": { "authorId": { "$in": subscriptions } } },
             { "$sort": { ['updatedTimestamp']: -1, } },
@@ -345,7 +340,6 @@ async function buildAggregate(userId, forUserIdSubscriptions, query, categories,
 
     if (sortBy) {
         const sortOption = await SortOption.findById(sortBy);
-        console.log(sortOption.field)
         if (sortOption.field.indexOf('&') != -1) {
             const s = {};
             sortOption.field.split('&').forEach((e) => {

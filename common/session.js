@@ -1,6 +1,5 @@
 var jwt = require('jsonwebtoken');
 const secret = process.env.SECRET;
-console.log(secret);
 
 module.exports = {
     createSession: (userId) => {
