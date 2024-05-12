@@ -1,6 +1,6 @@
 const User = require('../model/user');
 const session = require('../common/session');
-const utils = require('../common/utils');
+const utils = require('../common/password-utils');
 const AccountDetails = require('../model/account-details');
 const Review = require('../model/review');
 const FavoriteRecipe = require('../model/favorite-recipe');

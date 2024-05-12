@@ -1,6 +1,6 @@
 const User = require('../model/user');
 const session = require('../common/session');
-const utils = require('../common/utils');
+const utils = require('../common/password-utils');
 
 module.exports = function (app) {
 
