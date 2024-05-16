@@ -1,0 +1,6 @@
+projectKey=Diploma-server
+serverUrl=http://localhost:9000
+serverVersion=10.5.1.90531
+dashboardUrl=http://localhost:9000/dashboard?id=Diploma-server
+ceTaskId=4b4e6c58-563d-4230-a296-73a5a43028e8
+ceTaskUrl=http://localhost:9000/api/ce/task?id=4b4e6c58-563d-4230-a296-73a5a43028e8
