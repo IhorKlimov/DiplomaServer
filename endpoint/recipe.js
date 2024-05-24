@@ -18,6 +18,8 @@ module.exports = function (app) {
         const showMyRecipes = req.query.showMyRecipes;
         const fromMySubscriptionsOnly = req.query.fromMySubscriptionsOnly;
         const sortBy = req.query.sortBy;
+        const caloriesFrom = req.query.caloriesFrom;
+        const caloriesTo = req.query.caloriesTo;
         const page = req.query.page;
 
 
@@ -37,7 +39,17 @@ module.exports = function (app) {
             }
         }
 
-        const aggregates = await buildAggregate(userId, forUserIdSubscriptions, query, categories, cookingMethods, difficulty, sortBy, page);
+        const aggregates = await buildAggregate(
+            userId,
+            forUserIdSubscriptions,
+            query,
+            categories,
+            cookingMethods,
+            difficulty,
+            sortBy,
+            caloriesFrom,
+            caloriesTo,
+            page);
 
         try {
             const data = await Recipe.aggregate(aggregates).exec();
@@ -252,7 +264,7 @@ module.exports = function (app) {
 
 }
 
-async function buildAggregate(userId, forUserIdSubscriptions, query, categories, cookingMethods, difficulty, sortBy, page) {
+async function buildAggregate(userId, forUserIdSubscriptions, query, categories, cookingMethods, difficulty, sortBy, caloriesFrom, caloriesTo, page) {
     const pipelines = [
         { "$match": { "$expr": { "$eq": ["$_id", "$$authorObjectId"] } } },
     ];
@@ -292,6 +304,12 @@ async function buildAggregate(userId, forUserIdSubscriptions, query, categories,
             { "$match": { "authorId": { "$in": subscriptions } } },
             { "$sort": { ['updatedTimestamp']: -1, } },
         );
+    }
+    if (caloriesFrom) {
+        aggregates.push({ "$match": { "caloriesPerServing": { "$gte": parseInt(caloriesFrom) } }, });
+    }
+    if (caloriesTo) {
+        aggregates.push({ "$match": { "caloriesPerServing": { "$lte": parseInt(caloriesTo) } }, });
     }
 
     aggregates.push(

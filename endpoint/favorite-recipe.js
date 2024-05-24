@@ -32,6 +32,8 @@ module.exports = function (app) {
             const cookingMethods = req.query.cookingMethods;
             const difficulty = req.query.difficulty;
             const sortBy = req.query.sortBy;
+            const caloriesFrom = req.query.caloriesFrom;
+            const caloriesTo = req.query.caloriesTo;
             const page = req.query.page;
 
             if (!userId) {
@@ -63,6 +65,12 @@ module.exports = function (app) {
             }
             if (difficulty) {
                 aggregates.push({ "$match": { "difficulty": { "$eq": new ObjectId(difficulty) } }, });
+            }
+            if (caloriesFrom) {
+                aggregates.push({ "$match": { "caloriesPerServing": { "$gte": parseInt(caloriesFrom) } }, });
+            }
+            if (caloriesTo) {
+                aggregates.push({ "$match": { "caloriesPerServing": { "$lte": parseInt(caloriesTo) } }, });
             }
             if (sortBy) {
                 const sortOption = await SortOption.findById(sortBy);
