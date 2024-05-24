@@ -34,6 +34,11 @@ module.exports = function (app) {
             const sortBy = req.query.sortBy;
             const caloriesFrom = req.query.caloriesFrom;
             const caloriesTo = req.query.caloriesTo;
+            const selectedDiets = req.query.selectedDiets;
+            const ratingFrom = req.query.ratingFrom;
+            const ratingTo = req.query.ratingTo;
+            const cookingTimeFrom = req.query.cookingTimeFrom;
+            const cookingTimeTo = req.query.cookingTimeTo;
             const page = req.query.page;
 
             if (!userId) {
@@ -59,6 +64,10 @@ module.exports = function (app) {
                 const c = categories.split(',').map(e => new ObjectId(e));
                 aggregates.push({ "$match": { "categories": { "$in": c } }, });
             }
+            if (selectedDiets) {
+                const c = selectedDiets.split(',').map(e => new ObjectId(e));
+                aggregates.push({ "$match": { "specialDiets": { "$in": c } }, });
+            }
             if (cookingMethods) {
                 const c = cookingMethods.split(',').map(e => new ObjectId(e));
                 aggregates.push({ "$match": { "cookingMethods": { "$in": c } }, });
@@ -71,6 +80,12 @@ module.exports = function (app) {
             }
             if (caloriesTo) {
                 aggregates.push({ "$match": { "caloriesPerServing": { "$lte": parseInt(caloriesTo) } }, });
+            }
+            if (ratingFrom) {
+                aggregates.push({ "$match": { "rating": { "$gte": parseInt(ratingFrom) } }, });
+            }
+            if (ratingTo) {
+                aggregates.push({ "$match": { "rating": { "$lte": parseInt(ratingTo) } }, });
             }
             if (sortBy) {
                 const sortOption = await SortOption.findById(sortBy);
@@ -120,8 +135,27 @@ module.exports = function (app) {
                         "as": "cookingMethods",
                     },
                 },
+                {
+                    "$lookup": {
+                        "from": "cookingtimes",
+                        "localField": "_id",
+                        "foreignField": "recipeId",
+                        "as": "cookingTime",
+                    },
+                },
+                { "$unwind": { path: "$cookingTime" } },
                 { "$unwind": { path: "$difficulty" } },
                 { "$unwind": { path: "$author" } },
+            );
+
+            if (cookingTimeFrom) {
+                aggregates.push({ "$match": { "cookingTime.total": { "$gte": parseInt(cookingTimeFrom) } }, });
+            }
+            if (cookingTimeTo) {
+                aggregates.push({ "$match": { "cookingTime.total": { "$lte": parseInt(cookingTimeTo) } }, });
+            }
+
+            aggregates.push(
                 {
                     $facet: {
                         results: [

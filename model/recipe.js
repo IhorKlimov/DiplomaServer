@@ -8,6 +8,7 @@ const recipeSchema = new mongoose.Schema({
     description: { type: String, required: true },
     categories: { type: [{ type: ObjectId, ref: 'categories', }], required: true, },
     cookingMethods: { type: [{ type: ObjectId, ref: 'cookingmethods', }], required: true, },
+    specialDiets: { type: [{ type: ObjectId, ref: 'specialdiets', }], required: false, },
     difficulty: { type: ObjectId, ref: 'difficulties', required: true, },
     authorId: { type: String, required: true },
     rating: { type: Number, required: false, },
