@@ -34,6 +34,7 @@ require('./endpoint/subscription')(app);
 require('./endpoint/notification')(app);
 require('./endpoint/review-like')(app);
 require('./endpoint/special-diet')(app);
+require('./endpoint/ingredient')(app);
 
 
 app.get("/", express.static(path.join(__dirname, "./public")));
