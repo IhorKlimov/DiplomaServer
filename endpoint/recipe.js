@@ -340,7 +340,6 @@ async function buildAggregate(userId, forUserIdSubscriptions, queryObject, page)
             "$match": {
                 "$or": [
                     { "title": { "$regex": `.*${queryObject.query}.*`, "$options": 'i' }, },
-                    { "ingredients": { "$regex": `.*${queryObject.query}.*`, "$options": 'i' }, }
                 ]
             }
         });
