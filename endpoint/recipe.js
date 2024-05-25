@@ -182,6 +182,8 @@ module.exports = function (app) {
                 ingredientIds.push(model._id);
             }
 
+            const caloriesPerServing = Math.round(ingredients.reduce((acc, curr) => acc + curr.calories, 0) / req.body.servings);
+
             const recipe = Recipe({
                 title: req.body.title,
                 imageUrl: req.body.imageUrl,
@@ -192,7 +194,7 @@ module.exports = function (app) {
                 categories: req.body.categories,
                 cookingMethods: req.body.cookingMethods,
                 specialDiets: req.body.specialDiets,
-                caloriesPerServing: req.body.caloriesPerServing,
+                caloriesPerServing: caloriesPerServing,
                 servings: req.body.servings,
                 createdTimestamp: new Date().getTime(),
                 updatedTimestamp: new Date().getTime(),
@@ -253,7 +255,9 @@ module.exports = function (app) {
 
                 ingredientIds.push(model._id);
             }
-            
+
+            const caloriesPerServing = Math.round(ingredients.reduce((acc, curr) => acc + curr.calories, 0) / req.body.servings);
+
             await Recipe.findByIdAndUpdate(recipeId, {
                 title: req.body.title,
                 imageUrl: req.body.imageUrl,
@@ -262,7 +266,7 @@ module.exports = function (app) {
                 categories: req.body.categories,
                 specialDiets: req.body.specialDiets,
                 servings: req.body.servings,
-                caloriesPerServing: req.body.caloriesPerServing,
+                caloriesPerServing: caloriesPerServing,
                 cookingMethods: req.body.cookingMethods,
                 difficulty: req.body.difficulty,
                 updatedTimestamp: new Date().getTime(),
