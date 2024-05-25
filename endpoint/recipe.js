@@ -2,6 +2,7 @@ const Recipe = require('../model/recipe');
 const { ObjectId } = require('mongodb');
 const session = require('../common/session');
 const SortOption = require('../model/sort-option');
+const Ingredient = require('../model/ingredient');
 const CookingTime = require('../model/cooking-time');
 const Subscription = require('../model/subscription');
 const NotificationController = require("../controller/notification");
@@ -97,6 +98,14 @@ module.exports = function (app) {
                     },
                     {
                         "$lookup": {
+                            "from": "ingredients",
+                            "localField": "ingredients",
+                            "foreignField": "_id",
+                            "as": "ingredients",
+                        },
+                    },
+                    {
+                        "$lookup": {
                             "from": "specialdiets",
                             "localField": "specialDiets",
                             "foreignField": "_id",
@@ -157,11 +166,27 @@ module.exports = function (app) {
                 return;
             }
 
+            const ingredients = req.body.ingredients;
+            const ingredientIds = [];
+
+            for (let i in ingredients) {
+                const ingredient = ingredients[i];
+
+                const model = await Ingredient({
+                    name: ingredient.name,
+                    amount: ingredient.amount,
+                    measurement: ingredient.measurement,
+                    calories: ingredient.calories,
+                }).save();
+
+                ingredientIds.push(model._id);
+            }
+
             const recipe = Recipe({
                 title: req.body.title,
                 imageUrl: req.body.imageUrl,
                 description: req.body.text,
-                ingredients: req.body.ingredients,
+                ingredients: ingredientIds,
                 authorId: userId,
                 difficulty: req.body.difficulty,
                 categories: req.body.categories,
@@ -210,11 +235,30 @@ module.exports = function (app) {
                 return;
             }
 
+            for (let i in recipe.ingredients) {
+                await Ingredient.findByIdAndDelete(recipe.ingredients[i]);
+            }
+            const ingredients = req.body.ingredients;
+            const ingredientIds = [];
+
+            for (let i in ingredients) {
+                const ingredient = ingredients[i];
+
+                const model = await Ingredient({
+                    name: ingredient.name,
+                    amount: ingredient.amount,
+                    measurement: ingredient.measurement,
+                    calories: ingredient.calories,
+                }).save();
+
+                ingredientIds.push(model._id);
+            }
+            
             await Recipe.findByIdAndUpdate(recipeId, {
                 title: req.body.title,
                 imageUrl: req.body.imageUrl,
                 description: req.body.text,
-                ingredients: req.body.ingredients,
+                ingredients: ingredientIds,
                 categories: req.body.categories,
                 specialDiets: req.body.specialDiets,
                 servings: req.body.servings,
@@ -258,8 +302,12 @@ module.exports = function (app) {
                 return;
             }
 
+            for (let i in recipe.ingredients) {
+                await Ingredient.findByIdAndDelete(recipe.ingredients[i]);
+            }
             await Recipe.findByIdAndDelete(recipeId);
             await CookingTime.findOneAndDelete({ recipeId });
+
 
             res.send({ status: 'Deleted recipe' });
         } catch (e) {

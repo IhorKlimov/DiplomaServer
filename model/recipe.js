@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const recipeSchema = new mongoose.Schema({
     title: { type: String, required: true },
     imageUrl: { type: String, required: true },
-    ingredients: { type: String, required: true },
+    ingredients: { type: [{ type: ObjectId, ref: 'ingredients', }], required: true, },
     description: { type: String, required: true },
     categories: { type: [{ type: ObjectId, ref: 'categories', }], required: true, },
     cookingMethods: { type: [{ type: ObjectId, ref: 'cookingmethods', }], required: true, },
