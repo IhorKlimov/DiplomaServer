@@ -23,6 +23,7 @@ module.exports = function (app) {
             caloriesFrom: req.query.caloriesFrom,
             caloriesTo: req.query.caloriesTo,
             selectedDiets: req.query.selectedDiets,
+            selectedIngredients: req.query.selectedIngredients,
             ratingFrom: req.query.ratingFrom,
             ratingTo: req.query.ratingTo,
             cookingTimeFrom: req.query.cookingTimeFrom,
@@ -424,6 +425,14 @@ async function buildAggregate(userId, forUserIdSubscriptions, queryObject, page)
         },
         {
             "$lookup": {
+                "from": "ingredients",
+                "localField": "ingredients",
+                "foreignField": "_id",
+                "as": "ingredients",
+            },
+        },
+        {
+            "$lookup": {
                 "from": "specialdiets",
                 "localField": "specialDiets",
                 "foreignField": "_id",
@@ -448,6 +457,10 @@ async function buildAggregate(userId, forUserIdSubscriptions, queryObject, page)
         }
     }
 
+    if (queryObject.selectedIngredients){
+        const c = queryObject.selectedIngredients.split(',');
+        aggregates.push({ "$match": { "ingredients.name": { "$in": c } }, });
+    }
     if (queryObject.cookingTimeFrom) {
         aggregates.push({ "$match": { "cookingTime.total": { "$gte": parseInt(queryObject.cookingTimeFrom) } }, });
     }
