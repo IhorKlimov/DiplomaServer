@@ -39,6 +39,7 @@ module.exports = function (app) {
             const ratingTo = req.query.ratingTo;
             const cookingTimeFrom = req.query.cookingTimeFrom;
             const cookingTimeTo = req.query.cookingTimeTo;
+            const selectedIngredients = req.query.selectedIngredients;
             const page = req.query.page;
 
             if (!userId) {
@@ -137,6 +138,14 @@ module.exports = function (app) {
                 },
                 {
                     "$lookup": {
+                        "from": "ingredients",
+                        "localField": "ingredients",
+                        "foreignField": "_id",
+                        "as": "ingredients",
+                    },
+                },
+                {
+                    "$lookup": {
                         "from": "cookingtimes",
                         "localField": "_id",
                         "foreignField": "recipeId",
@@ -148,6 +157,10 @@ module.exports = function (app) {
                 { "$unwind": { path: "$author" } },
             );
 
+            if (selectedIngredients){
+                const c = selectedIngredients.split(',');
+                aggregates.push({ "$match": { "ingredients.name": { "$in": c } }, });
+            }
             if (cookingTimeFrom) {
                 aggregates.push({ "$match": { "cookingTime.total": { "$gte": parseInt(cookingTimeFrom) } }, });
             }
