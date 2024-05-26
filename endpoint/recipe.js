@@ -178,12 +178,18 @@ module.exports = function (app) {
                     amount: ingredient.amount,
                     measurement: ingredient.measurement,
                     calories: ingredient.calories,
+                    fat: ingredient.fat,
+                    carbohydrates: ingredient.carbohydrates,
+                    protein: ingredient.protein,
                 }).save();
 
                 ingredientIds.push(model._id);
             }
 
             const caloriesPerServing = Math.round(ingredients.reduce((acc, curr) => acc + curr.calories, 0) / req.body.servings);
+            const carbohydratesPerServing = Math.round(ingredients.reduce((acc, curr) => acc + curr.carbohydrates, 0) / req.body.servings);
+            const fatPerServing = Math.round(ingredients.reduce((acc, curr) => acc + curr.fat, 0) / req.body.servings);
+            const proteinPerServing = Math.round(ingredients.reduce((acc, curr) => acc + curr.protein, 0) / req.body.servings);
 
             const recipe = Recipe({
                 title: req.body.title,
@@ -196,6 +202,9 @@ module.exports = function (app) {
                 cookingMethods: req.body.cookingMethods,
                 specialDiets: req.body.specialDiets,
                 caloriesPerServing: caloriesPerServing,
+                carbohydratesPerServing: carbohydratesPerServing,
+                fatPerServing: fatPerServing,
+                proteinPerServing: proteinPerServing,
                 servings: req.body.servings,
                 createdTimestamp: new Date().getTime(),
                 updatedTimestamp: new Date().getTime(),
@@ -252,12 +261,18 @@ module.exports = function (app) {
                     amount: ingredient.amount,
                     measurement: ingredient.measurement,
                     calories: ingredient.calories,
+                    fat: ingredient.fat,
+                    carbohydrates: ingredient.carbohydrates,
+                    protein: ingredient.protein,
                 }).save();
 
                 ingredientIds.push(model._id);
             }
 
             const caloriesPerServing = Math.round(ingredients.reduce((acc, curr) => acc + curr.calories, 0) / req.body.servings);
+            const carbohydratesPerServing = Math.round(ingredients.reduce((acc, curr) => acc + curr.carbohydrates, 0) / req.body.servings);
+            const fatPerServing = Math.round(ingredients.reduce((acc, curr) => acc + curr.fat, 0) / req.body.servings);
+            const proteinPerServing = Math.round(ingredients.reduce((acc, curr) => acc + curr.protein, 0) / req.body.servings);
 
             await Recipe.findByIdAndUpdate(recipeId, {
                 title: req.body.title,
@@ -268,6 +283,9 @@ module.exports = function (app) {
                 specialDiets: req.body.specialDiets,
                 servings: req.body.servings,
                 caloriesPerServing: caloriesPerServing,
+                carbohydratesPerServing: carbohydratesPerServing,
+                fatPerServing: fatPerServing,
+                proteinPerServing: proteinPerServing,
                 cookingMethods: req.body.cookingMethods,
                 difficulty: req.body.difficulty,
                 updatedTimestamp: new Date().getTime(),
@@ -457,7 +475,7 @@ async function buildAggregate(userId, forUserIdSubscriptions, queryObject, page)
         }
     }
 
-    if (queryObject.selectedIngredients){
+    if (queryObject.selectedIngredients) {
         const c = queryObject.selectedIngredients.split(',');
         aggregates.push({ "$match": { "ingredients.name": { "$in": c } }, });
     }
