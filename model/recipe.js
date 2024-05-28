@@ -16,6 +16,7 @@ const recipeSchema = new mongoose.Schema({
     fatPerServing: { type: Number, required: false },
     carbohydratesPerServing: { type: Number, required: false },
     proteinPerServing: { type: Number, required: false },
+    sizePerServing: { type: Number, required: false },
     servings: { type: Number, required: false, },
     createdTimestamp: { type: Number, required: true },
     updatedTimestamp: { type: Number, required: false },

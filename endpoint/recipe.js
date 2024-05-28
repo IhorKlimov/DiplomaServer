@@ -170,26 +170,13 @@ module.exports = function (app) {
             const ingredients = req.body.ingredients;
             const ingredientIds = [];
 
-            for (let i in ingredients) {
-                const ingredient = ingredients[i];
-
-                const model = await Ingredient({
-                    name: ingredient.name,
-                    amount: ingredient.amount,
-                    measurement: ingredient.measurement,
-                    calories: ingredient.calories,
-                    fat: ingredient.fat,
-                    carbohydrates: ingredient.carbohydrates,
-                    protein: ingredient.protein,
-                }).save();
-
-                ingredientIds.push(model._id);
-            }
+            await populateIngredients(ingredients, ingredientIds);
 
             const caloriesPerServing = Math.round(ingredients.reduce((acc, curr) => acc + curr.calories, 0) / req.body.servings);
             const carbohydratesPerServing = Math.round(ingredients.reduce((acc, curr) => acc + curr.carbohydrates, 0) / req.body.servings);
             const fatPerServing = Math.round(ingredients.reduce((acc, curr) => acc + curr.fat, 0) / req.body.servings);
             const proteinPerServing = Math.round(ingredients.reduce((acc, curr) => acc + curr.protein, 0) / req.body.servings);
+            const sizePerServing = Math.round(ingredients.reduce((acc, curr) => acc + curr.size, 0) / req.body.servings);
 
             const recipe = Recipe({
                 title: req.body.title,
@@ -205,6 +192,7 @@ module.exports = function (app) {
                 carbohydratesPerServing: carbohydratesPerServing,
                 fatPerServing: fatPerServing,
                 proteinPerServing: proteinPerServing,
+                sizePerServing: sizePerServing,
                 servings: req.body.servings,
                 createdTimestamp: new Date().getTime(),
                 updatedTimestamp: new Date().getTime(),
@@ -253,26 +241,13 @@ module.exports = function (app) {
             const ingredients = req.body.ingredients;
             const ingredientIds = [];
 
-            for (let i in ingredients) {
-                const ingredient = ingredients[i];
-
-                const model = await Ingredient({
-                    name: ingredient.name,
-                    amount: ingredient.amount,
-                    measurement: ingredient.measurement,
-                    calories: ingredient.calories,
-                    fat: ingredient.fat,
-                    carbohydrates: ingredient.carbohydrates,
-                    protein: ingredient.protein,
-                }).save();
-
-                ingredientIds.push(model._id);
-            }
+            await populateIngredients(ingredients, ingredientIds);
 
             const caloriesPerServing = Math.round(ingredients.reduce((acc, curr) => acc + curr.calories, 0) / req.body.servings);
             const carbohydratesPerServing = Math.round(ingredients.reduce((acc, curr) => acc + curr.carbohydrates, 0) / req.body.servings);
             const fatPerServing = Math.round(ingredients.reduce((acc, curr) => acc + curr.fat, 0) / req.body.servings);
             const proteinPerServing = Math.round(ingredients.reduce((acc, curr) => acc + curr.protein, 0) / req.body.servings);
+            const sizePerServing = Math.round(ingredients.reduce((acc, curr) => acc + curr.size, 0) / req.body.servings);
 
             await Recipe.findByIdAndUpdate(recipeId, {
                 title: req.body.title,
@@ -286,6 +261,7 @@ module.exports = function (app) {
                 carbohydratesPerServing: carbohydratesPerServing,
                 fatPerServing: fatPerServing,
                 proteinPerServing: proteinPerServing,
+                sizePerServing: sizePerServing,
                 cookingMethods: req.body.cookingMethods,
                 difficulty: req.body.difficulty,
                 updatedTimestamp: new Date().getTime(),
@@ -518,4 +494,23 @@ async function buildAggregate(userId, forUserIdSubscriptions, queryObject, page)
     );
 
     return aggregates;
+}
+
+async function populateIngredients(ingredients, ingredientIds) {
+    for (let i in ingredients) {
+        const ingredient = ingredients[i];
+
+        const model = await Ingredient({
+            name: ingredient.name,
+            amount: ingredient.amount,
+            measurement: ingredient.measurement,
+            calories: ingredient.calories,
+            size: ingredient.size,
+            fat: ingredient.fat,
+            carbohydrates: ingredient.carbohydrates,
+            protein: ingredient.protein,
+        }).save();
+
+        ingredientIds.push(model._id);
+    }
 }

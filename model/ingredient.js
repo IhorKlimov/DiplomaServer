@@ -8,6 +8,7 @@ const ingredientSchema = new mongoose.Schema({
     fat: { type: Number, required: false },
     carbohydrates: { type: Number, required: false },
     protein: { type: Number, required: false },
+    size: { type: Number, required: false },
 });
 const Ingredient = mongoose.model('ingredients', ingredientSchema);
 
