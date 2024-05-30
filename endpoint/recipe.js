@@ -66,7 +66,7 @@ module.exports = function (app) {
         const userId = session.getUserId(req.get('session'));
 
         if (!id) {
-            res.send("Missing attributes");
+            res.send("Відсутні атрибути");
             return;
         }
 
@@ -225,7 +225,7 @@ module.exports = function (app) {
                 return;
             }
             if (!recipeId) {
-                res.status(400).send('Missing attributes');
+                res.status(400).send('Відсутні атрибути');
                 return;
             }
 
@@ -291,7 +291,7 @@ module.exports = function (app) {
                 return;
             }
             if (!recipeId) {
-                res.status(400).send('Missing attributes');
+                res.status(400).send('Відсутні атрибути');
                 return;
             }
 

@@ -77,7 +77,7 @@ module.exports = function (app) {
             }
 
             if (!followingUserId) {
-                res.status(400).send('Missing attributes');
+                res.status(400).send('Відсутні атрибути');
                 return;
             }
             const existing = await Subscription.find({

@@ -6,7 +6,7 @@ module.exports = function (app) {
             const name = req.body.name;
 
             if (!name) {
-                res.status(400).send('Missing attributes');
+                res.status(400).send('Відсутні атрибути');
                 return;
             }
 
@@ -27,7 +27,7 @@ module.exports = function (app) {
             const id = req.body.id;
 
             if (!id) {
-                res.status(400).send('Missing attributes');
+                res.status(400).send('Відсутні атрибути');
                 return;
             }
 

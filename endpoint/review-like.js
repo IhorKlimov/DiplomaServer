@@ -12,7 +12,7 @@ module.exports = function (app) {
                 return;
             }
             if (!reviewId) {
-                res.status(400).send('Missing attributes');
+                res.status(400).send('Відсутні атрибути');
                 return;
             }
             const existing = await ReviewLike.find({

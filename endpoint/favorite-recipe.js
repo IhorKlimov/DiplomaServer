@@ -218,7 +218,7 @@ module.exports = function (app) {
             }
 
             if (!recipeId) {
-                res.status(400).send('Missing attributes');
+                res.status(400).send('Відсутні атрибути');
                 return;
             }
             const existing = await FavoriteRecipe.find({
@@ -241,7 +241,7 @@ module.exports = function (app) {
                 return;
             }
             if (!recipeId) {
-                res.status(400).send('Missing attributes');
+                res.status(400).send('Відсутні атрибути');
                 return;
             }
             const existing = await FavoriteRecipe.find({

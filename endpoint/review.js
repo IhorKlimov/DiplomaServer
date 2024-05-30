@@ -15,7 +15,7 @@ module.exports = function (app) {
                 res.status(401).send('Unauthorized. Missing user id');
                 return;
             } else if (!text || !recipeId) {
-                res.status(400).send('Missing attributes');
+                res.status(400).send('Відсутні атрибути');
                 return;
             }
 
@@ -65,7 +65,7 @@ module.exports = function (app) {
             const recipeId = req.query.recipeId;
 
             if (!recipeId) {
-                res.status(400).send('Missing attributes');
+                res.status(400).send('Відсутні атрибути');
                 return;
             }
 

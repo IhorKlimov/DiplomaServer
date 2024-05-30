@@ -24,7 +24,7 @@ module.exports = function (app) {
             const id = req.params.id;
 
             if (!id) {
-                res.status(400).send('Missing attributes');
+                res.status(400).send('Відсутні атрибути');
                 return;
             }
 
