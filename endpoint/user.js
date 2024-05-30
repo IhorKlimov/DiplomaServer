@@ -33,7 +33,7 @@ module.exports = function (app) {
                     return;
                 }
             } else if (!userId) {
-                res.status(400).send('Missing attiributes');
+                res.status(400).send('Відсутні атрибути');
                 return;
             }
             const user = await User.findById(userId);
