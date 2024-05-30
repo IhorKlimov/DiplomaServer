@@ -12,7 +12,7 @@ module.exports = function (app) {
             const userId = session.getUserId(req.get('session'));
 
             if (!userId) {
-                res.status(401).send('Unauthorized. Missing user id');
+                res.status(401).send('Не авторизований. Відсутній ідентифікатор користувача');
                 return;
             }
 
@@ -43,7 +43,7 @@ module.exports = function (app) {
             const page = req.query.page;
 
             if (!userId) {
-                res.status(401).send('Unauthorized. Missing user id');
+                res.status(401).send('Не авторизований. Відсутній ідентифікатор користувача');
                 return;
             }
 
@@ -213,7 +213,7 @@ module.exports = function (app) {
             const recipeId = req.query.recipeId;
 
             if (!userId) {
-                res.status(401).send('Unauthorized. Missing user id');
+                res.status(401).send('Не авторизований. Відсутній ідентифікатор користувача');
                 return;
             }
 
@@ -237,7 +237,7 @@ module.exports = function (app) {
             const recipeId = req.body.recipeId;
 
             if (!userId) {
-                res.status(401).send('Unauthorized. Missing user id');
+                res.status(401).send('Не авторизований. Відсутній ідентифікатор користувача');
                 return;
             }
             if (!recipeId) {

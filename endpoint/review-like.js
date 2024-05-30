@@ -8,7 +8,7 @@ module.exports = function (app) {
             const reviewId = req.body.reviewId;
 
             if (!userId) {
-                res.status(401).send('Unauthorized. Missing user id');
+                res.status(401).send('Не авторизований. Відсутній ідентифікатор користувача');
                 return;
             }
             if (!reviewId) {

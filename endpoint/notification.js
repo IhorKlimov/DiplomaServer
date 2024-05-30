@@ -9,7 +9,7 @@ module.exports = function (app) {
             const userId = session.getUserId(req.get('session'));
 
             if (!userId) {
-                res.status(401).send('Unauthorized. Missing user id');
+                res.status(401).send('Не авторизований. Відсутній ідентифікатор користувача');
                 return;
             }
 
@@ -28,7 +28,7 @@ module.exports = function (app) {
             const userId = session.getUserId(req.get('session'));
 
             if (!userId) {
-                res.status(401).send('Unauthorized. Missing user id');
+                res.status(401).send('Не авторизований. Відсутній ідентифікатор користувача');
                 return;
             }
 

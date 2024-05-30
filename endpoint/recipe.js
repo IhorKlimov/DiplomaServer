@@ -35,7 +35,7 @@ module.exports = function (app) {
         if (showMyRecipes === 'true') {
             userId = session.getUserId(req.get('session'));
             if (!userId) {
-                res.status(401).send('Unauthorized. Missing user id');
+                res.status(401).send('Не авторизований. Відсутній ідентифікатор користувача');
                 return;
             }
         }
@@ -43,7 +43,7 @@ module.exports = function (app) {
         if (fromMySubscriptionsOnly === 'true') {
             forUserIdSubscriptions = session.getUserId(req.get('session'));
             if (!forUserIdSubscriptions) {
-                res.status(401).send('Unauthorized. Missing user id');
+                res.status(401).send('Не авторизований. Відсутній ідентифікатор користувача');
                 return;
             }
         }
@@ -71,7 +71,7 @@ module.exports = function (app) {
         }
 
         if (verifyAuthor === 'true' && !userId) {
-            res.status(401).send('Unauthorized. Missing user id');
+            res.status(401).send('Не авторизований. Відсутній ідентифікатор користувача');
             return;
         }
 
@@ -163,7 +163,7 @@ module.exports = function (app) {
         try {
             const userId = session.getUserId(req.get('session'));
             if (!userId) {
-                res.status(401).send('Unauthorized. Missing user id');
+                res.status(401).send('Не авторизований. Відсутній ідентифікатор користувача');
                 return;
             }
 
@@ -221,7 +221,7 @@ module.exports = function (app) {
             const userId = session.getUserId(req.get('session'));
             const recipeId = req.body.recipeId;
             if (!userId) {
-                res.status(401).send('Unauthorized. Missing user id');
+                res.status(401).send('Не авторизований. Відсутній ідентифікатор користувача');
                 return;
             }
             if (!recipeId) {
@@ -287,7 +287,7 @@ module.exports = function (app) {
             const userId = session.getUserId(req.get('session'));
             const recipeId = req.body.recipeId;
             if (!userId) {
-                res.status(401).send('Unauthorized. Missing user id');
+                res.status(401).send('Не авторизований. Відсутній ідентифікатор користувача');
                 return;
             }
             if (!recipeId) {

@@ -29,7 +29,7 @@ module.exports = function (app) {
             if (getMyProfile === 'true') {
                 userId = session.getUserId(req.get('session'));
                 if (!userId) {
-                    res.status(401).send('Unauthorized. Missing user id');
+                    res.status(401).send('Не авторизований. Відсутній ідентифікатор користувача');
                     return;
                 }
             } else if (!userId) {
@@ -122,7 +122,7 @@ module.exports = function (app) {
         try {
             const userId = session.getUserId(req.get('session'));
             if (!userId) {
-                res.status(401).send('Unauthorized. Missing user id');
+                res.status(401).send('Не авторизований. Відсутній ідентифікатор користувача');
                 return;
             }
 
@@ -147,7 +147,7 @@ module.exports = function (app) {
         try {
             const userId = session.getUserId(req.get('session'));
             if (!userId) {
-                res.status(401).send('Unauthorized. Missing user id');
+                res.status(401).send('Не авторизований. Відсутній ідентифікатор користувача');
                 return;
             }
 

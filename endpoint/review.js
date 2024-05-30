@@ -12,7 +12,7 @@ module.exports = function (app) {
             const recipeId = req.body.recipeId;
 
             if (!userId) {
-                res.status(401).send('Unauthorized. Missing user id');
+                res.status(401).send('Не авторизований. Відсутній ідентифікатор користувача');
                 return;
             } else if (!text || !recipeId) {
                 res.status(400).send('Відсутні атрибути');
